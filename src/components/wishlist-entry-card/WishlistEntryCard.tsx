@@ -1,18 +1,21 @@
-import NextLink from "next/link";
-import React, { useState } from "react";
+import NextLink from 'next/link';
+import React, { useState } from 'react';
 import {
-  Avatar,
-  AvatarGroup,
   chakra,
   Icon,
   IconButton,
-  Link,
   Tooltip,
+  Text,
+  Flex,
+  Button,
   Skeleton,
-} from "@chakra-ui/react";
-import { IoTrashBin } from "react-icons/io5";
-import { trpc } from "src/utils/trpc";
-import { WishlistDeleteConfirmPrompt } from "../wishlist-delete-confirm-prompt/WishlistDeleteConfirmPrompt";
+} from '@chakra-ui/react';
+import { IoLogOut, IoTrashBin } from 'react-icons/io5';
+import { WishlistDeleteConfirmPrompt } from '../wishlist-delete-confirm-prompt/WishlistDeleteConfirmPrompt';
+import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
+import { WishlistUsers } from 'src/components/wishlist-users/WishlistUsers';
+import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
+import { useGetWishlistsWithUserClaimedPosts } from 'hooks/queries/useGetWishlistsWithUserClaimedPosts';
 
 interface WishlistEntryCardProps {
   name?: string;
@@ -28,74 +31,105 @@ export const WishlistEntryCard = ({
   isLoading,
 }: WishlistEntryCardProps) => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const { data: usersInWishlist, isLoading: isLoadingUsersInWishlist } =
-    trpc.wishlist.retrieveAllUsers.useQuery(
-      { wishlistId: id ?? "" },
-      { enabled: !!id }
-    );
+  const { data: usersInWishlist = [], isLoading: isLoadingUsersInWishlist } =
+    useGetWishlistUsers(id ?? '');
+  const { data: wishlistPosts = [] } = useGetWishlistPosts(id ?? '');
+  const { data: wishlistsWithPostsClaimedByUser } =
+    useGetWishlistsWithUserClaimedPosts();
+
+  const postsClaimedByUser =
+    wishlistsWithPostsClaimedByUser?.find((w) => w.wishlistId === id)?.posts ??
+    [];
+
+  const isLoaded = false;
 
   return (
     <>
-      <chakra.div
-        display="flex"
+      <Flex
         flexDirection="column"
-        p={4}
         backgroundColor="white"
         width="full"
-        borderRadius={4}
+        border="1px"
+        borderColor="gray.300"
+        borderRadius={8}
+        overflow="hidden"
       >
-        <NextLink href="/" passHref>
-          <Link
-            fontSize="lg"
-            fontWeight="medium"
-            color="gray.800"
-            _hover={{
-              color: "blue.500",
-            }}
-            noOfLines={1}
-            mb={2}
-          >
-            <Skeleton h={6} isLoaded={!isLoading}>
-              {name ?? "Loading..."}
+        <Flex p={4} justifyContent="space-between">
+          <Flex mr={4} gap={1} flexDirection="column" alignItems="flex-start">
+            <Skeleton isLoaded={!isLoading} minW={32}>
+              <Text
+                fontSize="md"
+                fontWeight="medium"
+                color="gray.800"
+                noOfLines={1}
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+                as="h2"
+                mb={1}
+              >
+                {name ? name : 'Loading...'}
+              </Text>
             </Skeleton>
-          </Link>
-        </NextLink>
-        <chakra.div
-          display="flex"
+            <Skeleton isLoaded={!isLoading}>
+              <Text fontSize="sm" fontWeight="medium" color="gray.500">
+                {wishlistPosts.length} posts{' '}
+                {wishlistPosts.length > 1 &&
+                  `(${postsClaimedByUser.length} claimed)`}
+              </Text>
+            </Skeleton>
+          </Flex>
+          <Skeleton isLoaded={!isLoading} alignSelf="flex-start" mt={1}>
+            <NextLink href={`/wishlist/${id}`} passHref>
+              <Button
+                alignSelf="flex-start"
+                mt={1}
+                fontSize="sm"
+                variant="link"
+                colorScheme="blue"
+                as="a"
+              >
+                View
+              </Button>
+            </NextLink>
+          </Skeleton>
+        </Flex>
+        <Flex
+          flex={1}
           alignItems="center"
           justifyContent="space-between"
+          py={2}
+          px={4}
+          bg="gray.100"
         >
-          {isLoadingUsersInWishlist ? (
-            <Skeleton h={6} rounded={10000} width={16} />
-          ) : (
-            <AvatarGroup>
-              {usersInWishlist?.map((user) => (
-                <Tooltip key={user.id} label={user?.email}>
-                  <Avatar size="sm" src={user?.image ?? ""} />
-                </Tooltip>
-              ))}
-            </AvatarGroup>
-          )}
-          {isAdmin && (
-            <Tooltip label="Delete wishlist">
-              <IconButton
-                aria-label="Delete"
-                colorScheme="red"
-                variant="ghost"
-                isRound
-                onClick={() => setIsDeleteConfirmOpen(true)}
-              >
-                <Icon as={IoTrashBin} />
-              </IconButton>
-            </Tooltip>
-          )}
-        </chakra.div>
-      </chakra.div>
+          <Skeleton isLoaded={!isLoading}>
+            <Flex alignItems="center" gap={2}>
+              <WishlistUsers size="sm" users={usersInWishlist} />
+              <Text>{usersInWishlist.length} users</Text>
+            </Flex>
+          </Skeleton>
+          <Flex gap={2} alignItems="center">
+            {isAdmin && (
+              <Tooltip flexShrink={0} label="Delete wishlist">
+                <IconButton
+                  minH={10}
+                  ml={2}
+                  aria-label="Delete wishlist"
+                  variant="link"
+                  onClick={() => setIsDeleteConfirmOpen(true)}
+                >
+                  <Icon as={IoTrashBin} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Flex>
+        </Flex>
+      </Flex>
       <WishlistDeleteConfirmPrompt
         isOpen={isDeleteConfirmOpen}
         onCancel={() => setIsDeleteConfirmOpen(false)}
         onClose={() => setIsDeleteConfirmOpen(false)}
-        wishlistId={id ?? ""}
+        wishlistId={id ?? ''}
       />
     </>
   );

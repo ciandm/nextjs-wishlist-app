@@ -1,42 +1,61 @@
-// src/pages/_app.tsx
-import "../styles/globals.css";
-import type { AppType } from "next/app";
-import { Layout } from "../components/layout/Layout";
-import { ChakraProvider } from "@chakra-ui/react";
-import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import type { AppProps } from 'next/app';
+import { ChakraProvider } from '@chakra-ui/react';
+import { ReactElement, ReactNode, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import {
   createBrowserSupabaseClient,
   Session,
-} from "@supabase/auth-helpers-nextjs";
+} from '@supabase/auth-helpers-nextjs';
+import { Database } from 'types/database.types';
+import { theme } from 'src/theme/theme';
+import { NextPage } from 'next';
+import { Layout } from 'components/layout/Layout';
 
-const App: AppType<{ initialSession: Session | null }> = ({
+export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
+  P,
+  IP
+> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps<{ initialSession: Session | null }> & {
+  Component: NextPageWithLayout;
+};
+
+const App = ({
   Component,
   pageProps: { initialSession, ...pageProps },
-}) => {
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+}: AppPropsWithLayout) => {
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient<Database>()
+  );
   const [queryClient] = useState(
     new QueryClient({
       defaultOptions: {
         queries: {
           refetchOnWindowFocus: false,
+          cacheTime: Infinity,
+          staleTime: Infinity,
         },
       },
     })
   );
 
+  const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
+      <ChakraProvider
+        toastOptions={{ defaultOptions: { position: 'top', isClosable: true } }}
+        theme={theme}
+      >
         <SessionContextProvider
           supabaseClient={supabaseClient}
           initialSession={initialSession}
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          {getLayout(<Component {...pageProps} />)}
         </SessionContextProvider>
       </ChakraProvider>
       <ReactQueryDevtools />

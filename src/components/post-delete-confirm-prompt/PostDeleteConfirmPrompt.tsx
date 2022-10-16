@@ -1,35 +1,36 @@
 import { ModalProps, useToast } from '@chakra-ui/react';
 import { ConfirmPrompt } from 'components/confirm-prompt/ConfirmPrompt';
 import React from 'react';
-import { useDeleteWishlist } from 'src/hooks/mutations/useDeleteWishlist';
+import { useDeletePost } from 'src/hooks/mutations/useDeletePost';
 
-interface WishlistDeleteConfirmPromptProps
-  extends Omit<ModalProps, 'children'> {
+interface PostDeleteConfirmPromptProps extends Omit<ModalProps, 'children'> {
   wishlistId: string;
+  postId: string;
   onCancel: () => void;
 }
 
-export const WishlistDeleteConfirmPrompt = ({
+export const PostDeleteConfirmPrompt = ({
   isOpen,
   onClose,
+  postId,
   wishlistId,
-}: WishlistDeleteConfirmPromptProps) => {
+}: PostDeleteConfirmPromptProps) => {
   const { mutate: handleDeleteWishlist, isLoading: isDeletingWishlist } =
-    useDeleteWishlist();
+    useDeletePost();
   const toast = useToast();
 
   return (
     <ConfirmPrompt
-      title='Are you sure you want to delete this wishlist?'
-      description='Deleting this wishlist will remove it forever, along with the data. This action cannot be undone.'
+      title='Are you sure you want to delete this post?'
+      description='Deleting this post will remove it forever, along with the data and any claims it may have by other users. This action cannot be undone.'
       onConfirm={() =>
         handleDeleteWishlist(
-          { id: wishlistId ?? '' },
+          { postId, wishlistId },
           {
             onSuccess: () => {
               toast({
-                title: 'Wishlist deleted',
-                description: 'The wishlist has been deleted successfully',
+                title: 'Post deleted',
+                description: 'The post has been deleted',
                 status: 'success',
                 position: 'top',
               });
@@ -37,6 +38,8 @@ export const WishlistDeleteConfirmPrompt = ({
           }
         )
       }
+      isLoading={isDeletingWishlist}
+      isDisabled={isDeletingWishlist}
       isOpen={isOpen}
       onClose={onClose}
       closeOnEsc={isDeletingWishlist ? false : true}

@@ -31,36 +31,6 @@ GRANT EXECUTE ON FUNCTION public.handle_new_user() TO service_role;
 
 GRANT EXECUTE ON FUNCTION public.handle_new_user() TO PUBLIC;
 
-CREATE TABLE IF NOT EXISTS public.posts_claimed
-(
-    "userId" uuid NOT NULL,
-    "postId" uuid NOT NULL,
-    CONSTRAINT posts_claimed_pkey PRIMARY KEY ("userId", "postId"),
-    CONSTRAINT "posts_claimed_postId_fkey" FOREIGN KEY ("postId")
-        REFERENCES public.posts (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT "posts_claimed_userId_fkey" FOREIGN KEY ("userId")
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.posts_claimed
-    OWNER to supabase_admin;
-
-GRANT ALL ON TABLE public.posts_claimed TO anon;
-
-GRANT ALL ON TABLE public.posts_claimed TO postgres;
-
-GRANT ALL ON TABLE public.posts_claimed TO supabase_admin;
-
-GRANT ALL ON TABLE public.posts_claimed TO authenticated;
-
-GRANT ALL ON TABLE public.posts_claimed TO service_role;
-
 CREATE TABLE IF NOT EXISTS public.users
 (
     id uuid NOT NULL,
@@ -86,66 +56,6 @@ GRANT ALL ON TABLE public.users TO supabase_admin;
 GRANT ALL ON TABLE public.users TO authenticated;
 
 GRANT ALL ON TABLE public.users TO service_role;
-
-CREATE TABLE IF NOT EXISTS public.wishlist_post
-(
-    "wishlistId" uuid NOT NULL,
-    "postId" uuid,
-    CONSTRAINT wishlist_post_pkey PRIMARY KEY ("wishlistId"),
-    CONSTRAINT "wishlist_post_postId_fkey" FOREIGN KEY ("postId")
-        REFERENCES public.posts (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT "wishlist_post_wishlistId_fkey" FOREIGN KEY ("wishlistId")
-        REFERENCES public.wishlists (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.wishlist_post
-    OWNER to supabase_admin;
-
-GRANT ALL ON TABLE public.wishlist_post TO anon;
-
-GRANT ALL ON TABLE public.wishlist_post TO postgres;
-
-GRANT ALL ON TABLE public.wishlist_post TO supabase_admin;
-
-GRANT ALL ON TABLE public.wishlist_post TO authenticated;
-
-GRANT ALL ON TABLE public.wishlist_post TO service_role;
-
-CREATE TABLE IF NOT EXISTS public.user_post
-(
-    "userId" uuid NOT NULL,
-    "postId" uuid NOT NULL,
-    CONSTRAINT user_post_pkey PRIMARY KEY ("userId", "postId"),
-    CONSTRAINT "user_post_postId_fkey" FOREIGN KEY ("postId")
-        REFERENCES public.posts (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT "user_post_userId_fkey" FOREIGN KEY ("userId")
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.user_post
-    OWNER to supabase_admin;
-
-GRANT ALL ON TABLE public.user_post TO anon;
-
-GRANT ALL ON TABLE public.user_post TO postgres;
-
-GRANT ALL ON TABLE public.user_post TO supabase_admin;
-
-GRANT ALL ON TABLE public.user_post TO authenticated;
-
-GRANT ALL ON TABLE public.user_post TO service_role;
 
 CREATE TABLE IF NOT EXISTS public.posts
 (
@@ -201,6 +111,66 @@ GRANT ALL ON TABLE public.wishlists TO authenticated;
 
 GRANT ALL ON TABLE public.wishlists TO service_role;
 
+CREATE TABLE IF NOT EXISTS public.user_post
+(
+    "userId" uuid NOT NULL,
+    "postId" uuid NOT NULL,
+    CONSTRAINT user_post_pkey PRIMARY KEY ("userId", "postId"),
+    CONSTRAINT "user_post_postId_fkey" FOREIGN KEY ("postId")
+        REFERENCES public.posts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "user_post_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+CREATE TABLE IF NOT EXISTS public.wishlist_post
+(
+    "wishlistId" uuid NOT NULL,
+    "postId" uuid,
+    CONSTRAINT wishlist_post_pkey PRIMARY KEY ("wishlistId"),
+    CONSTRAINT "wishlist_post_postId_fkey" FOREIGN KEY ("postId")
+        REFERENCES public.posts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "wishlist_post_wishlistId_fkey" FOREIGN KEY ("wishlistId")
+        REFERENCES public.wishlists (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.wishlist_post
+    OWNER to supabase_admin;
+
+GRANT ALL ON TABLE public.wishlist_post TO anon;
+
+GRANT ALL ON TABLE public.wishlist_post TO postgres;
+
+GRANT ALL ON TABLE public.wishlist_post TO supabase_admin;
+
+GRANT ALL ON TABLE public.wishlist_post TO authenticated;
+
+GRANT ALL ON TABLE public.wishlist_post TO service_role;
+
+ALTER TABLE IF EXISTS public.user_post
+    OWNER to supabase_admin;
+
+GRANT ALL ON TABLE public.user_post TO anon;
+
+GRANT ALL ON TABLE public.user_post TO postgres;
+
+GRANT ALL ON TABLE public.user_post TO supabase_admin;
+
+GRANT ALL ON TABLE public.user_post TO authenticated;
+
+GRANT ALL ON TABLE public.user_post TO service_role;
+
 CREATE TABLE IF NOT EXISTS public.user_wishlist
 (
     "userId" uuid NOT NULL,
@@ -231,11 +201,32 @@ GRANT ALL ON TABLE public.user_wishlist TO authenticated;
 
 GRANT ALL ON TABLE public.user_wishlist TO service_role;
 
-REVOKE ALL ON TABLE public.employees FROM authenticated;
-REVOKE ALL ON TABLE public.employees FROM postgres;
-REVOKE ALL ON TABLE public.employees FROM service_role;
-GRANT ALL ON TABLE public.employees TO authenticated;
+CREATE TABLE IF NOT EXISTS public.posts_claimed
+(
+    "userId" uuid NOT NULL,
+    "postId" uuid NOT NULL,
+    CONSTRAINT posts_claimed_pkey PRIMARY KEY ("userId", "postId"),
+    CONSTRAINT "posts_claimed_postId_fkey" FOREIGN KEY ("postId")
+        REFERENCES public.posts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "posts_claimed_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-GRANT ALL ON TABLE public.employees TO postgres;
+TABLESPACE pg_default;
 
-GRANT ALL ON TABLE public.employees TO service_role;
+ALTER TABLE IF EXISTS public.posts_claimed
+    OWNER to supabase_admin;
+
+GRANT ALL ON TABLE public.posts_claimed TO anon;
+
+GRANT ALL ON TABLE public.posts_claimed TO postgres;
+
+GRANT ALL ON TABLE public.posts_claimed TO supabase_admin;
+
+GRANT ALL ON TABLE public.posts_claimed TO authenticated;
+
+GRANT ALL ON TABLE public.posts_claimed TO service_role;

@@ -1,58 +1,133 @@
-import React from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { Button } from "@chakra-ui/react";
-import { useState } from "react";
-import { supabase } from "../../supabase/client";
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
+import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
+import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
+import { NextPageWithLayout } from 'pages/_app';
+import {
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  Heading,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+import { IoMailOpen } from 'react-icons/io5';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
 
-const Login = () => {
-  const { data: session } = useSession();
+interface LoginFormState {
+  email: string;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
+const Login: NextPageWithLayout = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<LoginFormState>();
+  const user = useUser();
+  const { auth } = useSupabaseClient();
+  const [isLoading, setLoading] = useState(false);
+  const toast = useToast();
+  const router = useRouter();
 
-  const handleLogin = async (e: any) => {
-    e.preventDefault();
+  if (user?.id) {
+    router.push('/');
+  }
 
+  const onSubmit = handleSubmit(async ({ email }) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signInWithOtp({ email });
+      const { error } = await auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: '/' },
+      });
       if (error) throw error;
-      alert("Check your email for the login link!");
+      toast({
+        title: 'Check your email',
+        description: 'You should receive an email with a link shortly.',
+        status: 'success',
+      });
     } catch (error) {
-      alert(error);
+      console.log(error);
+      toast({
+        title: 'Something went wrong',
+        description: 'Please try again.',
+        status: 'error',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  });
 
   return (
-    <div className="row flex-center flex">
-      <div className="col-6 form-widget" aria-live="polite">
-        <h1 className="header">Supabase + React</h1>
-        <p className="description">
-          Sign in via magic link with your email below
-        </p>
-        {loading ? (
-          "Sending magic link..."
-        ) : (
-          <form onSubmit={handleLogin}>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              className="inputField"
+    <Flex
+      flexDirection="column"
+      bg="gray.200"
+      height="100vh"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
+      <Heading color="blue.600" mb={6}>
+        Wishlist
+      </Heading>
+      <Flex
+        maxW={400}
+        border="1px"
+        borderColor="gray.300"
+        bg="white"
+        as="form"
+        px={4}
+        py={6}
+        w="full"
+        borderRadius={8}
+        flexDirection="column"
+        gap={4}
+        onSubmit={onSubmit}
+      >
+        <Text>
+          Enter your email to receive a link to log in. You must be registered
+          beforehand to have access.
+        </Text>
+        <FormControl isInvalid={!!errors.email}>
+          <InputGroup>
+            <InputLeftAddon>
+              <Icon color="gray.500" as={IoMailOpen} />
+            </InputLeftAddon>
+            <Input
               type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email', {
+                required: { value: true, message: 'An email is required' },
+                onBlur: (e) => setValue('email', e.target.value.trim()),
+              })}
+              placeholder="johndoe@gmail.com"
             />
-            <button className="button block" aria-live="polite">
-              Send magic link
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
+          </InputGroup>
+          <FormErrorMessage>
+            {errors.email && errors.email.message}
+          </FormErrorMessage>
+        </FormControl>
+        <Button
+          isLoading={isLoading}
+          loadingText="Submitting..."
+          type="submit"
+          colorScheme="blue"
+        >
+          Submit
+        </Button>
+      </Flex>
+    </Flex>
   );
 };
 
 export default Login;
+
+Login.getLayout = (page) => page;
