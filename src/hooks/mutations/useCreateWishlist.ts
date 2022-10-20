@@ -1,20 +1,34 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
-import { DatabaseInsertValues } from 'types/utils';
+import { DatabaseInsertValues, Wishlist } from 'types/utils';
 import { useUser } from '@supabase/auth-helpers-react';
 import { GET_WISHLISTS_BY_USER_ID_KEY } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 
 type CreateWishlistInput = Pick<DatabaseInsertValues<'wishlists'>, 'name'> & {
-  users?: { id: string }[];
+  users?: { email: string }[];
 };
 
 export const useCreateWishlist = () => {
   const queryClient = useQueryClient();
-  const { wishlists, user_wishlist } = useSupabaseClient();
+  const { users, wishlists, user_wishlist } = useSupabaseClient();
   const user = useUser();
 
-  return useMutation<unknown, unknown, CreateWishlistInput>(
-    async ({ name, users }) => {
+  return useMutation(
+    async ({ name, users: passedUsers = [] }: CreateWishlistInput) => {
+      console.log('--- [useCreateWishlist] creating wishlist');
+      const { data: usersData, count } = await users
+        .select('*', {
+          count: 'exact',
+        })
+        .in(
+          'email',
+          passedUsers.map((user) => user.email)
+        );
+
+      if (count !== passedUsers?.length) {
+        throw new Error("One or more users don't exist");
+      }
+
       const result = await wishlists
         .insert({ name, created_by: user?.id })
         .select();
@@ -24,16 +38,24 @@ export const useCreateWishlist = () => {
       const wishlistData = result?.data?.[0];
 
       await user_wishlist.insert(
-        users?.map((user) => ({
+        usersData?.map((user) => ({
           userId: user.id,
           wishlistId: wishlistData?.id ?? '',
         })) ?? []
       );
+
+      return wishlistData;
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(
-          GET_WISHLISTS_BY_USER_ID_KEY.query(user?.id ?? '')
+      onSuccess: (data) => {
+        queryClient.setQueryData<Wishlist[]>(
+          GET_WISHLISTS_BY_USER_ID_KEY.query(user?.id ?? ''),
+          (oldData) => {
+            if (!data) {
+              return oldData;
+            }
+            return [...(oldData ?? []), { ...data }];
+          }
         );
       },
     }

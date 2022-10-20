@@ -28,20 +28,21 @@ import { IoRemove } from 'react-icons/io5';
 
 interface CreateWishlistFormState {
   name: string;
-  users: { name: string }[];
+  users: { email: string }[];
 }
 
 export const CreateWishlistForm = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { data: user } = useGetUser();
+  const [isOpen, setIsOpen] = useState(false);
   const {
     handleSubmit,
     formState: { errors },
     control,
     setValue,
     register,
+    reset,
   } = useForm<CreateWishlistFormState>({
-    defaultValues: { users: [{ name: '' }] },
+    defaultValues: { users: [{ email: '' }] },
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -58,9 +59,19 @@ export const CreateWishlistForm = () => {
     useCreateWishlist();
 
   const onSubmit = handleSubmit((data) => {
+    if (data.users.find((u) => u.email === user?.email)) {
+      toast({
+        title: 'You are already in the list.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      return;
+    }
     const wishlistUsers = [
-      { id: user?.id ?? '' },
-      ...data.users.map((user) => ({ id: user.name })),
+      { email: user?.email ?? '' },
+      ...data.users.map((user) => ({ email: user.email })),
     ];
     handleCreateWishlist(
       {
@@ -77,16 +88,23 @@ export const CreateWishlistForm = () => {
             position: 'top',
           });
         },
+        onError: (error) => {
+          if (error instanceof Error) {
+            toast({
+              title: 'Something went wrong',
+              description: error.message,
+              status: 'error',
+              position: 'top-right',
+            });
+          }
+        },
       }
     );
-    setValue('name', '');
-    // setValue('users', [{ name: '' }]);
   });
 
   const handleOnClose = () => {
     setIsOpen(false);
-    setValue('name', '');
-    // setValue('users', [{ name: '' }]);
+    reset();
   };
 
   return (
@@ -123,6 +141,7 @@ export const CreateWishlistForm = () => {
                       value: 4,
                       message: 'Minimum length should be 4',
                     },
+                    onBlur: (e) => setValue('name', e.target.value.trim()),
                   })}
                   placeholder="Enter a name for your wishlist"
                 />
@@ -147,9 +166,9 @@ export const CreateWishlistForm = () => {
                       alignItems="center"
                       justifyContent="space-between"
                     >
-                      <FormControl label="Name">
+                      <FormControl isInvalid={!!errors.users} label="Name">
                         <Input
-                          {...register(`users.${index}.name` as const, {
+                          {...register(`users.${index}.email` as const, {
                             required: 'This is required',
                             minLength: {
                               value: 4,
@@ -157,11 +176,12 @@ export const CreateWishlistForm = () => {
                             },
                             onBlur: (e) =>
                               setValue(
-                                `users.${index}.name`,
+                                `users.${index}.email`,
                                 e.target.value.trim()
                               ),
                           })}
-                          placeholder="Add user"
+                          type="email"
+                          placeholder="Enter email address"
                         />
                       </FormControl>
                       <IconButton
@@ -178,8 +198,8 @@ export const CreateWishlistForm = () => {
               <Button
                 w="full"
                 mt={4}
-                isDisabled={users?.some(({ name }) => name === '')}
-                onClick={() => append({ name: '' })}
+                isDisabled={users?.some(({ email }) => email === '')}
+                onClick={() => append({ email: '' })}
                 aria-label="Add others"
                 colorScheme="green"
                 variant="ghost"

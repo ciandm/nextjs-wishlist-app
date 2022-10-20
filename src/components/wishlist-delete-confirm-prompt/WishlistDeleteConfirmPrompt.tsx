@@ -20,8 +20,8 @@ export const WishlistDeleteConfirmPrompt = ({
 
   return (
     <ConfirmPrompt
-      title='Are you sure you want to delete this wishlist?'
-      description='Deleting this wishlist will remove it forever, along with the data. This action cannot be undone.'
+      title="Are you sure you want to delete this wishlist?"
+      description="Deleting this wishlist will remove it forever, along with the data. This action cannot be undone."
       onConfirm={() =>
         handleDeleteWishlist(
           { id: wishlistId ?? '' },
@@ -37,6 +37,8 @@ export const WishlistDeleteConfirmPrompt = ({
           }
         )
       }
+      isLoading={isDeletingWishlist}
+      isDisabled={isDeletingWishlist}
       isOpen={isOpen}
       onClose={onClose}
       closeOnEsc={isDeletingWishlist ? false : true}

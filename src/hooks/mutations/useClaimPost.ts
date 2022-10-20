@@ -57,6 +57,21 @@ export const useClaimPost = ({ wishlistId }: { wishlistId: string }) => {
             return [...(oldData ?? []), { wishlistId, posts: [postId] }];
           }
         );
+
+        queryClient.setQueryData<WishlistPost[]>(
+          GET_WISHLIST_POSTS_KEY.query(wishlistId ?? ''),
+          (oldData) => {
+            return oldData?.map((data) => {
+              if (data.id === postId) {
+                return {
+                  ...data,
+                  claimed_by: [...data?.claimed_by, { id: user?.id ?? '' }],
+                };
+              }
+              return data;
+            });
+          }
+        );
       },
     }
   );

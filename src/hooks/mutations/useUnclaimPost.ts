@@ -60,6 +60,23 @@ export const useUnclaimPost = ({ wishlistId }: { wishlistId: string }) => {
             }
           }
         );
+
+        queryClient.setQueryData<WishlistPost[]>(
+          GET_WISHLIST_POSTS_KEY.query(wishlistId ?? ''),
+          (oldData) => {
+            return oldData?.map((data) => {
+              if (data.id === postId) {
+                return {
+                  ...data,
+                  claimed_by: data.claimed_by.filter(
+                    (user) => user.id !== user?.id
+                  ),
+                };
+              }
+              return data;
+            });
+          }
+        );
       },
     }
   );

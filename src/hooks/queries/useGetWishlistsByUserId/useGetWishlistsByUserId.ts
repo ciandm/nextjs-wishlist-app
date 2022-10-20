@@ -14,6 +14,7 @@ export const useGetWishlistsByUserId = () => {
   return useQuery(
     GET_WISHLISTS_BY_USER_ID_KEY.query(user?.id ?? ''),
     async () => {
+      console.log('--- [useGetWishlistsByUserId] fetching');
       const { data: wishlistsById } = await user_wishlist
         .select('*')
         .eq('userId', user?.id);
@@ -25,8 +26,9 @@ export const useGetWishlistsByUserId = () => {
         wishlistsById.map((wishlist) => wishlist.wishlistId)
       );
 
+      console.log('--- [useGetWishlistsByUserId] fetched', wishlistsData);
+
       return wishlistsData ?? [];
-    },
-    { enabled: !!user?.id ?? '' }
+    }
   );
 };

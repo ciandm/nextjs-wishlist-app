@@ -76,6 +76,8 @@ export const WishlistPost = ({
   const isUnclaimed = !isAuthor && usersWhoHaveClaimed?.length === 0;
   const isClaimedByUser = claimed_by?.some((c) => c.id === user?.id);
 
+  console.log(isClaimedByUser);
+
   useEffect(() => {
     const debounceFn = debounce(() => setIsLoading(true), 300);
     if (isLoadingClaimPost || isLoadingUnClaimPost) {
