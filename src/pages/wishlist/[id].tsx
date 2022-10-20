@@ -140,7 +140,13 @@ const WishlistPage = () => {
           <TabPanel flex={1} px={0}>
             <UserPosts wishlistId={id} />
           </TabPanel>
-          <TabPanel display="flex" flexDirection="column" flex={1} px={0}>
+          <TabPanel
+            display="flex"
+            flexDirection="column"
+            flex={1}
+            px={0}
+            pb={16}
+          >
             {otherPosts?.length > 0 ? (
               <OtherPosts wishlistId={wishlist?.id ?? ''} />
             ) : (

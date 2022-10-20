@@ -25,7 +25,7 @@ export const UserWishlists = () => {
 
   return (
     <Flex
-      pb={[8, 0]}
+      pb={[16, 0]}
       px={[4, 4, 0]}
       pt={4}
       flex={1}

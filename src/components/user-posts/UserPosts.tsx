@@ -34,7 +34,7 @@ export const UserPosts = ({ wishlistId }: { wishlistId: string }) => {
   const hasNoPosts = usersPosts.length === 0 && status === 'success';
 
   return (
-    <chakra.div display="flex" flexDirection="column" gap={4}>
+    <chakra.div display="flex" flexDirection="column" gap={4} pb={16}>
       <PostsContainer
         isFetching={isFetching}
         hasPosts={hasPosts}

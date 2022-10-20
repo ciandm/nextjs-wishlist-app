@@ -15,6 +15,7 @@ import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGe
 import { WishlistUsers } from 'src/components/wishlist-users/WishlistUsers';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
+import { useGetUser } from 'hooks/queries/useGetUser';
 
 interface WishlistEntryCardProps {
   name?: string;
@@ -30,6 +31,7 @@ export const WishlistEntryCard = ({
   isLoading,
 }: WishlistEntryCardProps) => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { data: user } = useGetUser();
   const { data: usersInWishlist = [] } = useGetWishlistUsers(id ?? '');
   const { data: wishlistPosts = [] } = useGetWishlistPosts(id ?? '');
   const { data: wishlistsWithPostsClaimedByUser } = useGetUsersClaimedPosts();
@@ -37,6 +39,12 @@ export const WishlistEntryCard = ({
   const postsClaimedByUser =
     wishlistsWithPostsClaimedByUser?.find((w) => w.wishlistId === id)?.posts ??
     [];
+
+  const otherPostsCount = wishlistPosts.filter(
+    (post) => post.created_by !== user?.id
+  ).length;
+
+  const userPostsCount = wishlistPosts?.length - otherPostsCount;
 
   return (
     <>
@@ -67,10 +75,20 @@ export const WishlistEntryCard = ({
               </Text>
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
+              <Text fontSize="sm" color="gray.500">
+                {wishlistPosts?.length} post{wishlistPosts?.length !== 1 && 's'}{' '}
+                total
+              </Text>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
               <Text fontSize="sm" fontWeight="medium" color="gray.500">
-                {wishlistPosts.length} posts{' '}
-                {wishlistPosts.length > 1 &&
-                  `(${postsClaimedByUser.length} claimed)`}
+                {userPostsCount} post{wishlistPosts?.length !== 1 && 's'} by you
+              </Text>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
+              <Text fontSize="sm" fontWeight="medium" color="gray.500">
+                {postsClaimedByUser?.length} post
+                {wishlistPosts?.length !== 1 && 's'} claimed by you
               </Text>
             </Skeleton>
           </Flex>

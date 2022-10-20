@@ -25,14 +25,12 @@ const Home: NextPage = () => {
   const shoppingListCount =
     claimedPosts?.reduce((acc, curr) => curr?.posts?.length + acc, 0) ?? 0;
 
-  console.log(claimedPosts);
   return (
     <>
       <chakra.div flex={1}>
         <chakra.div>
           <Tabs
-            height={['100vh', null, 'initial']}
-            maxH={['100vh', null, 'initial']}
+            minH={['100vh', null, 'initial']}
             display="flex"
             flexDirection="column"
           >
@@ -83,6 +81,7 @@ const Home: NextPage = () => {
                   display="flex"
                   flexDirection="column"
                   flex={1}
+                  pb={16}
                 >
                   <UserShoppingList />
                 </chakra.div>
