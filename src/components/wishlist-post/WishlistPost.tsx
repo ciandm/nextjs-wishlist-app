@@ -14,7 +14,9 @@ import { WishlistUsers } from 'components/wishlist-users/WishlistUsers';
 import React, { useState, useEffect } from 'react';
 import {
   IoCheckmarkCircle,
+  IoHandLeft,
   IoLink,
+  IoRemoveCircle,
   IoStar,
   IoStarOutline,
 } from 'react-icons/io5';
@@ -76,8 +78,6 @@ export const WishlistPost = ({
   const isUnclaimed = !isAuthor && usersWhoHaveClaimed?.length === 0;
   const isClaimedByUser = claimed_by?.some((c) => c.id === user?.id);
 
-  console.log(isClaimedByUser);
-
   useEffect(() => {
     const debounceFn = debounce(() => setIsLoading(true), 300);
     if (isLoadingClaimPost || isLoadingUnClaimPost) {
@@ -98,7 +98,7 @@ export const WishlistPost = ({
         backgroundColor="white"
         w="full"
         border="1px"
-        borderColor="gray.300"
+        borderColor={isPurchased && !isAuthor ? 'green.500' : 'gray.300'}
         borderRadius={8}
         overflow="hidden"
       >
@@ -146,7 +146,8 @@ export const WishlistPost = ({
                   <Icon as={IoLink} color="slategray" />
                   <Link
                     color="blue.500"
-                    href="#"
+                    href={url ?? ''}
+                    target="_blank"
                     fontSize="sm"
                     textDecoration="underline"
                   >
@@ -240,40 +241,54 @@ export const WishlistPost = ({
                 </Skeleton>
                 <Skeleton isLoaded={!isLoadingPost} ml="auto">
                   <Flex>
-                    <Button
-                      isLoading={isLoading}
-                      onClick={
-                        isClaimedByUser
-                          ? () =>
-                              handleUnClaimPost(
-                                { postId: id },
-                                {
-                                  onSuccess: () =>
-                                    toast({
-                                      title: 'Post unclaimed',
-                                      status: 'success',
-                                      description: `You have unclaimed ${createdByUser?.name}'s post`,
-                                    }),
-                                }
-                              )
-                          : () =>
-                              handleClaimPost(
-                                { postId: id },
-                                {
-                                  onSuccess: () =>
-                                    toast({
-                                      status: 'success',
-                                      title: 'Post claimed',
-                                      description: `You have claimed ${createdByUser?.name}'s post`,
-                                    }),
-                                }
-                              )
-                      }
-                      colorScheme="blue"
-                      size="sm"
-                    >
-                      {isClaimedByUser ? 'Unclaim' : 'Claim'}
-                    </Button>
+                    {isPurchased && isInShoppingList ? null : isPurchased ? (
+                      <Text fontSize="sm" fontWeight="medium">
+                        Purchased
+                      </Text>
+                    ) : (
+                      <Button
+                        variant={isClaimedByUser ? 'outline' : 'solid'}
+                        isLoading={isLoading}
+                        isDisabled={!!isPurchased}
+                        onClick={
+                          isClaimedByUser
+                            ? () =>
+                                handleUnClaimPost(
+                                  { postId: id },
+                                  {
+                                    onSuccess: () =>
+                                      toast({
+                                        title: 'Post unclaimed',
+                                        status: 'success',
+                                        description: `You have unclaimed ${createdByUser?.name}'s post`,
+                                        isClosable: true,
+                                      }),
+                                  }
+                                )
+                            : () =>
+                                handleClaimPost(
+                                  { postId: id },
+                                  {
+                                    onSuccess: () =>
+                                      toast({
+                                        status: 'success',
+                                        title: 'Post claimed',
+                                        description: `You have claimed ${createdByUser?.name}'s post`,
+                                        isClosable: true,
+                                      }),
+                                  }
+                                )
+                        }
+                        colorScheme="blue"
+                        size="sm"
+                      >
+                        <Icon
+                          mr={1}
+                          as={isClaimedByUser ? IoRemoveCircle : IoHandLeft}
+                        />
+                        {isClaimedByUser ? 'Unclaim' : 'Claim'}
+                      </Button>
+                    )}
                   </Flex>
                 </Skeleton>
               </>

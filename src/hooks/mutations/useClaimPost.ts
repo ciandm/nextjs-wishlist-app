@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
 import { useUser } from '@supabase/auth-helpers-react';
-import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetWishlistsWithUserClaimedPosts';
+import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetUsersClaimedPosts';
 import {
   GET_WISHLIST_POSTS_KEY,
   WishlistPost,
@@ -43,17 +43,18 @@ export const useClaimPost = ({ wishlistId }: { wishlistId: string }) => {
         queryClient.setQueryData<{ wishlistId: string; posts: string[] }[]>(
           GET_USERS_CLAIMED_POSTS_KEY.query(user?.id ?? ''),
           (oldData) => {
-            if (oldData?.find(({ wishlistId }) => wishlistId === wishlistId)) {
-              return oldData?.map((data) => {
-                if (data.wishlistId === wishlistId) {
+            if (oldData?.find((data) => data.wishlistId === wishlistId)) {
+              return oldData?.map((_data) => {
+                if (_data.wishlistId === wishlistId) {
                   return {
-                    ...data,
-                    posts: [...data.posts, postId],
+                    wishlistId: _data.wishlistId,
+                    posts: [..._data.posts, postId],
                   };
                 }
-                return data;
+                return _data;
               });
             }
+            console.log('out here');
             return [...(oldData ?? []), { wishlistId, posts: [postId] }];
           }
         );

@@ -8,7 +8,7 @@ export const GET_USERS_CLAIMED_POSTS_KEY = {
   query: (id: string) => [{ ...GET_USERS_CLAIMED_POSTS_KEY.base, id }],
 };
 
-export const useGetWishlistsWithUserClaimedPosts = () => {
+export const useGetUsersClaimedPosts = () => {
   const { posts_claimed, wishlist_post } = useSupabaseClient();
   const { data: user } = useGetUser();
 
@@ -32,7 +32,7 @@ export const useGetWishlistsWithUserClaimedPosts = () => {
         posts:
           wishlistPosts
             ?.filter((post) => post.wishlistId === id)
-            .map((post) => post) ?? [],
+            .map((post) => post.postId) ?? [],
       }));
     },
     { enabled: !!user?.id }

@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   chakra,
   Tabs,
@@ -16,18 +16,23 @@ import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUser
 import { UpdateUserForm } from 'components/update-user-form/UpdateUserForm';
 import { UserWishlists } from 'components/user-wishlists/UserWishlists';
 import { UserShoppingList } from 'components/user-shopping-list/UserShoppingList';
+import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
 
 const Home: NextPage = () => {
   const { isLoading: isLoadingWishlists } = useGetWishlistsByUserId();
+  const { data: claimedPosts } = useGetUsersClaimedPosts();
 
-  const [shoppingListCount, setShoppingListCount] = useState(0);
+  const shoppingListCount =
+    claimedPosts?.reduce((acc, curr) => curr?.posts?.length + acc, 0) ?? 0;
+
+  console.log(claimedPosts);
   return (
     <>
       <chakra.div flex={1}>
         <chakra.div>
           <Tabs
-            height="100vh"
-            maxH={'100vh'}
+            height={['100vh', null, 'initial']}
+            maxH={['100vh', null, 'initial']}
             display="flex"
             flexDirection="column"
           >
@@ -79,7 +84,7 @@ const Home: NextPage = () => {
                   flexDirection="column"
                   flex={1}
                 >
-                  <UserShoppingList setCount={setShoppingListCount} />
+                  <UserShoppingList />
                 </chakra.div>
               </TabPanel>
             </TabPanels>

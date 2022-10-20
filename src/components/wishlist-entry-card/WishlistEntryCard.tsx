@@ -14,7 +14,7 @@ import { WishlistDeleteConfirmPrompt } from '../wishlist-delete-confirm-prompt/W
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
 import { WishlistUsers } from 'src/components/wishlist-users/WishlistUsers';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
-import { useGetWishlistsWithUserClaimedPosts } from 'hooks/queries/useGetWishlistsWithUserClaimedPosts';
+import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
 
 interface WishlistEntryCardProps {
   name?: string;
@@ -32,8 +32,7 @@ export const WishlistEntryCard = ({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const { data: usersInWishlist = [] } = useGetWishlistUsers(id ?? '');
   const { data: wishlistPosts = [] } = useGetWishlistPosts(id ?? '');
-  const { data: wishlistsWithPostsClaimedByUser } =
-    useGetWishlistsWithUserClaimedPosts();
+  const { data: wishlistsWithPostsClaimedByUser } = useGetUsersClaimedPosts();
 
   const postsClaimedByUser =
     wishlistsWithPostsClaimedByUser?.find((w) => w.wishlistId === id)?.posts ??

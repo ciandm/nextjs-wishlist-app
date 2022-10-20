@@ -4,30 +4,15 @@ import { WishlistPost } from 'components/wishlist-post/WishlistPost';
 import { useGetWishlistsByUserId } from 'hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import { useGetUser } from 'src/hooks/queries/useGetUser';
-import { useGetWishlistsWithUserClaimedPosts } from 'hooks/queries/useGetWishlistsWithUserClaimedPosts';
+import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
 import emptyShoppingList from 'public/images/empty-shopping-list.svg';
 import NextLink from 'next/link';
-import { useEffect } from 'react';
 import { IoChevronForward } from 'react-icons/io5';
 import { EmptyState } from 'components/empty-state/EmptyState';
 
-export const UserShoppingList = ({
-  setCount,
-}: {
-  setCount: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+export const UserShoppingList = () => {
   const { data: usersWishlists } = useGetWishlistsByUserId();
-  const { data: wishlistsWithPostsClaimedByUser } =
-    useGetWishlistsWithUserClaimedPosts();
-
-  useEffect(() => {
-    setCount(
-      wishlistsWithPostsClaimedByUser?.reduce(
-        (acc, curr) => curr?.posts?.length + acc,
-        0
-      ) ?? 0
-    );
-  }, [wishlistsWithPostsClaimedByUser, setCount]);
+  const { data: wishlistsWithPostsClaimedByUser } = useGetUsersClaimedPosts();
 
   const validWishlists =
     usersWishlists?.filter((wishlist) =>
@@ -68,6 +53,10 @@ const WishlistGroup = ({ id, name }: { id: string; name: string }) => {
   const postsPurchasedCount = usersClaimedPosts?.filter(
     (post) => post.is_purchased
   ).length;
+
+  if (usersClaimedPosts.length === 0) {
+    return null;
+  }
 
   return (
     <Flex flexDirection="column" gap={2}>

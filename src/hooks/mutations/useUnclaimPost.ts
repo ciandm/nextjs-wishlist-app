@@ -5,7 +5,7 @@ import {
   GET_WISHLIST_POSTS_KEY,
   WishlistPost,
 } from 'src/hooks/queries/useGetWishlistPosts';
-import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetWishlistsWithUserClaimedPosts';
+import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetUsersClaimedPosts';
 import { useGetUser } from 'src/hooks/queries/useGetUser';
 import { updatePostInQueryData } from 'utils/queries';
 
@@ -20,25 +20,6 @@ export const useUnclaimPost = ({ wishlistId }: { wishlistId: string }) => {
     },
     {
       onSuccess: (_, { postId }) => {
-        const post = queryClient
-          .getQueryData<WishlistPost[]>(
-            GET_WISHLIST_POSTS_KEY.query(wishlistId)
-          )
-          ?.find((post) => post.id === postId);
-
-        if (post) {
-          updatePostInQueryData({
-            wishlistId,
-            post: {
-              ...post,
-              claimed_by: post?.claimed_by.filter(
-                (user) => user.id !== user?.id
-              ),
-            },
-            queryClient,
-          });
-        }
-
         queryClient.setQueryData<{ wishlistId: string; posts: string[] }[]>(
           GET_USERS_CLAIMED_POSTS_KEY.query(user?.id ?? ''),
           (oldData) => {
@@ -50,7 +31,7 @@ export const useUnclaimPost = ({ wishlistId }: { wishlistId: string }) => {
                       (post) => post !== postId
                     );
                     return {
-                      ...data,
+                      wishlistId: data.wishlistId,
                       posts: newPosts,
                     };
                   }
