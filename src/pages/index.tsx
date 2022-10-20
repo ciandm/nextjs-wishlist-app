@@ -11,7 +11,6 @@ import {
   Text,
   Skeleton,
   Flex,
-  Button,
 } from '@chakra-ui/react';
 import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 import { UpdateUserForm } from 'components/update-user-form/UpdateUserForm';
@@ -19,8 +18,7 @@ import { UserWishlists } from 'components/user-wishlists/UserWishlists';
 import { UserShoppingList } from 'components/user-shopping-list/UserShoppingList';
 
 const Home: NextPage = () => {
-  const { data: wishlists, isLoading: isLoadingWishlists } =
-    useGetWishlistsByUserId();
+  const { isLoading: isLoadingWishlists } = useGetWishlistsByUserId();
 
   const [shoppingListCount, setShoppingListCount] = useState(0);
   return (

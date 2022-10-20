@@ -25,7 +25,6 @@ import { OtherPosts } from 'components/other-posts/OtherPosts';
 import { useGetUser } from 'src/hooks/queries/useGetUser';
 import { UserPosts } from 'src/components/user-posts/UserPosts';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
-import { PostFilterOptions } from 'components/post-filter-options/PostFilterOptions';
 import { IoCheckmarkCircle, IoInformationCircle } from 'react-icons/io5';
 import { EmptyState } from 'components/empty-state/EmptyState';
 import emptyPosts from 'public/images/empty-posts.svg';
@@ -143,12 +142,7 @@ const WishlistPage = () => {
           </TabPanel>
           <TabPanel display="flex" flexDirection="column" flex={1} px={0}>
             {otherPosts?.length > 0 ? (
-              <OtherPosts
-                othersWhoUserHasNotClaimedForCount={
-                  othersWhoUserHasNotClaimedForCount
-                }
-                wishlistId={wishlist?.id ?? ''}
-              />
+              <OtherPosts wishlistId={wishlist?.id ?? ''} />
             ) : (
               <EmptyState
                 mt="auto"

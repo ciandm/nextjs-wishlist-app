@@ -1,4 +1,4 @@
-import { Checkbox, HStack, Select, VStack } from '@chakra-ui/react';
+import { HStack, Select } from '@chakra-ui/react';
 import React from 'react';
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
 import { useGetUser } from 'src/hooks/queries/useGetUser';

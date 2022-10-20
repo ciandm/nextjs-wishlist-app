@@ -1,7 +1,6 @@
 import NextLink from 'next/link';
 import React, { useState } from 'react';
 import {
-  chakra,
   Icon,
   IconButton,
   Tooltip,
@@ -10,7 +9,7 @@ import {
   Button,
   Skeleton,
 } from '@chakra-ui/react';
-import { IoLogOut, IoTrashBin } from 'react-icons/io5';
+import { IoTrashBin } from 'react-icons/io5';
 import { WishlistDeleteConfirmPrompt } from '../wishlist-delete-confirm-prompt/WishlistDeleteConfirmPrompt';
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
 import { WishlistUsers } from 'src/components/wishlist-users/WishlistUsers';
@@ -31,8 +30,7 @@ export const WishlistEntryCard = ({
   isLoading,
 }: WishlistEntryCardProps) => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const { data: usersInWishlist = [], isLoading: isLoadingUsersInWishlist } =
-    useGetWishlistUsers(id ?? '');
+  const { data: usersInWishlist = [] } = useGetWishlistUsers(id ?? '');
   const { data: wishlistPosts = [] } = useGetWishlistPosts(id ?? '');
   const { data: wishlistsWithPostsClaimedByUser } =
     useGetWishlistsWithUserClaimedPosts();
@@ -40,8 +38,6 @@ export const WishlistEntryCard = ({
   const postsClaimedByUser =
     wishlistsWithPostsClaimedByUser?.find((w) => w.wishlistId === id)?.posts ??
     [];
-
-  const isLoaded = false;
 
   return (
     <>

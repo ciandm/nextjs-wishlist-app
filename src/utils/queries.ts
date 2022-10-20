@@ -3,7 +3,7 @@ import {
   GET_WISHLIST_POSTS_KEY,
   WishlistPost,
 } from 'hooks/queries/useGetWishlistPosts';
-import { Post, Wishlist } from 'types/utils';
+import { Post } from 'types/utils';
 
 type PostInQueryData = Omit<WishlistPost, 'claimed_by'> & {
   claimed_by?: { id: string }[];
@@ -22,10 +22,17 @@ export function updatePostInQueryData({
   queryClient.setQueryData<WishlistPost[]>(
     GET_WISHLIST_POSTS_KEY.query(wishlistId),
     (oldData) => {
-      const newData = [...(oldData as any)];
+      if (!post) {
+        return;
+      }
+      const newData = [...(oldData ?? [])];
       const index = newData.findIndex((p) => p.id === post?.id);
-      newData[index] = { ...newData[index], ...post };
-      return newData;
+      newData[index] = {
+        ...newData[index],
+        ...post,
+        claimed_by: [...(newData[index]?.claimed_by ?? [])],
+      };
+      return newData as WishlistPost[];
     }
   );
 }
@@ -36,7 +43,7 @@ export function addPostToQueryData({
   queryClient,
 }: {
   wishlistId: string;
-  post?: PostInQueryData;
+  post?: Post;
   queryClient: QueryClient;
 }) {
   if (!post) return;
@@ -54,7 +61,7 @@ export function removePostFromQueryData({
   queryClient,
 }: {
   wishlistId: string;
-  post?: PostInQueryData;
+  post?: Post;
   queryClient: QueryClient;
 }) {
   if (!post) return;

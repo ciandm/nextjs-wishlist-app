@@ -7,13 +7,7 @@ import { PostFilterOptions } from 'components/post-filter-options/PostFilterOpti
 
 export type StatusFilterType = 'claimed' | 'unclaimed' | 'claimed-by-user';
 
-export const OtherPosts = ({
-  wishlistId,
-  othersWhoUserHasNotClaimedForCount,
-}: {
-  wishlistId: string;
-  othersWhoUserHasNotClaimedForCount: number;
-}) => {
+export const OtherPosts = ({ wishlistId }: { wishlistId: string }) => {
   const { data: user } = useGetUser();
   const { data: posts = [] } = useGetWishlistPosts(wishlistId);
 

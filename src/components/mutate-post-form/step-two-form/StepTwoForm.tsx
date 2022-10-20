@@ -1,7 +1,6 @@
 import { MutatePostFormState } from '../MutatePostForm';
 import { useWatch, useFormContext, useController } from 'react-hook-form';
 import {
-  Box,
   Checkbox,
   Flex,
   FormControl,
@@ -11,18 +10,7 @@ import {
   Input,
   Text,
   Textarea,
-  useCheckbox,
-  useRadio,
-  chakra,
-  Icon,
 } from '@chakra-ui/react';
-import {
-  IoAtCircle,
-  IoCheckmarkCircle,
-  IoCheckmarkDoneCircle,
-  IoStar,
-  IoStarOutline,
-} from 'react-icons/io5';
 
 export const StepTwoForm = ({
   onSubmit,

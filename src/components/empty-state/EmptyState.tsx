@@ -5,7 +5,7 @@ import Image from 'next/image';
 type EmptyStateProps = ChakraProps & {
   title: string;
   description: string;
-  src: any;
+  src: string;
 };
 
 export const EmptyState = ({

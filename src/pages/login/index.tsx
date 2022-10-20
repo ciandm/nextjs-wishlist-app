@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
-import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
 import { NextPageWithLayout } from 'pages/_app';
 import {

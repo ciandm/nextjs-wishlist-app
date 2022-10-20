@@ -1,5 +1,5 @@
 import { useGetUser } from 'src/hooks/queries/useGetUser';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import { useCreateWishlist } from 'src/hooks/mutations/useCreateWishlist';
 import {

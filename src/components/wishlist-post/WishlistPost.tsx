@@ -239,7 +239,7 @@ export const WishlistPost = ({
                 <Skeleton isLoaded={!isLoadingPost} ml="auto">
                   <Flex>
                     <Button
-                      isLoading={isLoadingClaimPost || isLoadingUnClaimPost}
+                      isLoading={isLoading}
                       onClick={
                         isClaimedByUser
                           ? () =>

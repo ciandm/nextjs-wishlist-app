@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, chakra, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { SignOutButton } from 'components/sign-out-button/SignOutButton';
 import { useSupabaseClient } from 'supabase/useSupabaseClient';
 import { useRouter } from 'next/router';

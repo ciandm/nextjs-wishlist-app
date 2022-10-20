@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Link, Flex, Icon, Box } from '@chakra-ui/react';
+import { Text, Flex, Icon, Box } from '@chakra-ui/react';
 import { WishlistPost } from 'components/wishlist-post/WishlistPost';
 import { useGetWishlistsByUserId } from 'hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';

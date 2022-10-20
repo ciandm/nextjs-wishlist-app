@@ -9,11 +9,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/react";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useUpdateUser } from "src/hooks/mutations/useUpdateUser";
-import { useGetUser } from "src/hooks/queries/useGetUser";
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useUpdateUser } from 'src/hooks/mutations/useUpdateUser';
+import { useGetUser } from 'src/hooks/queries/useGetUser';
 
 interface UpdateUserFormState {
   name: string;
@@ -44,7 +44,7 @@ export const UpdateUserForm = () => {
   return (
     <Modal
       isOpen={isUpdateNameFormOpen}
-      onClose={() => {}}
+      onClose={() => false}
       closeOnOverlayClick={false}
       closeOnEsc={false}
     >

@@ -1,9 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
-import {
-  GET_WISHLIST_POSTS_KEY,
-  WishlistPost,
-} from 'src/hooks/queries/useGetWishlistPosts';
 import { updatePostInQueryData } from 'utils/queries';
 
 export type ClaimPostInput = {
