@@ -77,7 +77,9 @@ const WishlistPage = () => {
         </BreadcrumbItem>
         <BreadcrumbItem isCurrentPage>
           <Skeleton isLoaded={!isLoadingWishlist}>
-            <BreadcrumbLink>{wishlist?.name ?? 'Loading...'}</BreadcrumbLink>
+            <BreadcrumbLink noOfLines={1}>
+              {wishlist?.name ?? 'Loading...'}
+            </BreadcrumbLink>
           </Skeleton>
         </BreadcrumbItem>
       </Breadcrumb>
