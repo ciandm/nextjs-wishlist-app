@@ -7,7 +7,7 @@ import { GET_WISHLISTS_BY_USER_ID_KEY } from 'src/hooks/queries/useGetWishlistsB
 type DeleteWishlistInput = Pick<DatabaseInsertValues<'wishlists'>, 'id'>;
 
 export const useDeleteWishlist = () => {
-  const { wishlists, user_wishlist } = useSupabaseClient();
+  const { wishlists, user_wishlist, posts } = useSupabaseClient();
   const queryClient = useQueryClient();
   const user = useUser();
 
@@ -18,13 +18,19 @@ export const useDeleteWishlist = () => {
         .eq('wishlist_id', id);
 
       if (userWishlistResponse.error) {
-        throw new Error('Failed to delete wishlist');
+        throw new Error('Failed to delete wishlist - user_wishlist');
+      }
+
+      const wishlistPostResponse = await posts.delete().eq('wishlist_id', id);
+
+      if (wishlistPostResponse.error) {
+        throw new Error('Failed to delete wishlist - posts');
       }
 
       const wishlistResponse = await wishlists.delete().eq('id', id);
 
       if (wishlistResponse.error) {
-        throw new Error('Failed to delete wishlist');
+        throw new Error('Failed to delete wishlist - wishlists');
       }
 
       return wishlistResponse.data;

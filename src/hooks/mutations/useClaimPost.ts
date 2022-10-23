@@ -13,15 +13,28 @@ export type ClaimPostInput = {
 };
 
 export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
-  const { posts_claimed } = useSupabaseClient();
+  const { posts_claimed, posts } = useSupabaseClient();
   const queryClient = useQueryClient();
   const user = useUser();
 
   return useMutation(
     async ({ post_id }: ClaimPostInput) => {
+      const postResponse = await posts
+        .select('*', { head: true, count: 'exact' })
+        .eq('id', post_id)
+        .single();
+
+      if (!postResponse.data) {
+        throw new Error('That post does not exist');
+      }
       await posts_claimed.insert({ post_id, user_id: user?.id ?? '' });
     },
     {
+      onError: () => {
+        queryClient.invalidateQueries(
+          GET_WISHLIST_POSTS_KEY.query(wishlist_id)
+        );
+      },
       onSuccess: (_, { post_id }) => {
         const post = queryClient
           .getQueryData<WishlistPost[]>(

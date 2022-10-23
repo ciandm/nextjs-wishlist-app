@@ -104,7 +104,7 @@ export const WishlistPost = ({
         overflow="hidden"
       >
         <Flex flex={1} flexDirection="column">
-          <Flex p={4} flex={1}>
+          <Flex w="full" p={4} flex={1}>
             <SkeletonCircle isLoaded={!isLoadingPost} mr={4}>
               <UserAvatar
                 size="sm"
@@ -152,6 +152,7 @@ export const WishlistPost = ({
                     fontSize="sm"
                     textDecoration="underline"
                     noOfLines={1}
+                    wordBreak="break-all"
                     w="full"
                   >
                     {url}
