@@ -8,6 +8,7 @@ import {
   Flex,
   Button,
   Skeleton,
+  Heading,
 } from '@chakra-ui/react';
 import { IoTrashBin } from 'react-icons/io5';
 import { WishlistDeleteConfirmPrompt } from '../wishlist-delete-confirm-prompt/WishlistDeleteConfirmPrompt';
@@ -59,20 +60,19 @@ export const WishlistEntryCard = ({
       >
         <Flex p={4} justifyContent="space-between">
           <Flex mr={4} gap={1} flexDirection="column" alignItems="flex-start">
-            <Skeleton isLoaded={!isLoading} minW={32}>
-              <Text
+            <Skeleton noOfLines={1} isLoaded={!isLoading} minW={32}>
+              <Heading
                 fontSize="md"
                 fontWeight="medium"
                 color="gray.800"
                 noOfLines={1}
                 overflow="hidden"
                 textOverflow="ellipsis"
-                whiteSpace="nowrap"
                 as="h2"
                 mb={1}
               >
                 {name ? name : 'Loading...'}
-              </Text>
+              </Heading>
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
               <Text fontSize="sm" color="gray.500">
@@ -92,7 +92,7 @@ export const WishlistEntryCard = ({
               </Text>
             </Skeleton>
           </Flex>
-          <Skeleton isLoaded={!isLoading} alignSelf="flex-start" mt={1}>
+          <Skeleton isLoaded={!isLoading} alignSelf="flex-start">
             <NextLink href={`/wishlist/${id}`} passHref>
               <Button
                 alignSelf="flex-start"
