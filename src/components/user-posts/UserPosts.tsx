@@ -19,14 +19,14 @@ import {
 } from 'components/mutate-post-form/MutatePostForm';
 import { Post } from 'types/utils';
 
-export const UserPosts = ({ wishlistId }: { wishlistId: string }) => {
+export const UserPosts = ({ wishlist_id }: { wishlist_id: string }) => {
   const { data: user } = useGetUser();
   const {
     data: posts = [],
     isLoading = true,
     isFetching,
     status,
-  } = useGetWishlistPosts(wishlistId);
+  } = useGetWishlistPosts(wishlist_id);
 
   const usersPosts = posts.filter((post) => post.created_by === user?.id);
 
@@ -40,7 +40,7 @@ export const UserPosts = ({ wishlistId }: { wishlistId: string }) => {
         hasPosts={hasPosts}
         isLoading={isLoading}
         usersPosts={usersPosts}
-        wishlistId={wishlistId}
+        wishlist_id={wishlist_id}
       />
       {hasNoPosts && !isFetching && (
         <Flex flexDirection="column">
@@ -52,7 +52,7 @@ export const UserPosts = ({ wishlistId }: { wishlistId: string }) => {
               favourite items that you really want.
             </Text>
           </Flex>
-          <MutatePostForm wishlistId={wishlistId} />
+          <MutatePostForm wishlist_id={wishlist_id} />
         </Flex>
       )}
     </chakra.div>
@@ -61,7 +61,7 @@ export const UserPosts = ({ wishlistId }: { wishlistId: string }) => {
 
 interface PostsContainerProps {
   usersPosts: ReturnType<typeof useGetWishlistPosts>['data'];
-  wishlistId: string;
+  wishlist_id: string;
   isLoading: boolean;
   hasPosts: boolean;
   isFetching: boolean;
@@ -69,12 +69,12 @@ interface PostsContainerProps {
 
 const PostsContainer = ({
   usersPosts = [],
-  wishlistId,
+  wishlist_id,
   isLoading,
   hasPosts,
   isFetching,
 }: PostsContainerProps) => {
-  const [editingPostId, setEditingPostId] = useState<string | undefined>(
+  const [editingpost_id, setEditingpost_id] = useState<string | undefined>(
     undefined
   );
   const [isAddPostOpen, setIsAddPostOpen] = useState(false);
@@ -90,7 +90,7 @@ const PostsContainer = ({
     url,
     price,
   }: Pick<Post, 'description' | 'name' | 'url' | 'price' | 'id'>) => {
-    setEditingPostId(id);
+    setEditingpost_id(id);
     setInitialData({
       description: description ?? '',
       name: name ?? '',
@@ -102,7 +102,7 @@ const PostsContainer = ({
   };
 
   function handleOnClose() {
-    setEditingPostId(undefined);
+    setEditingpost_id(undefined);
     setInitialData({
       description: '',
       name: '',
@@ -116,10 +116,10 @@ const PostsContainer = ({
   const mutatePostFormProps = {
     onClose: handleOnClose,
     isOpen: isAddPostOpen,
-    isEditing: !!editingPostId,
+    isEditing: !!editingpost_id,
     initialData,
-    wishlistId,
-    postId: editingPostId,
+    wishlist_id,
+    post_id: editingpost_id,
   };
 
   if (!hasPosts && !isFetching) {
@@ -153,7 +153,7 @@ const PostsContainer = ({
           <WishlistPost
             onEdit={handleOnEdit}
             key={post?.id ? post.id : index}
-            wishlistId={wishlistId}
+            wishlist_id={wishlist_id}
             isLoading={isLoading}
             {...post}
           />

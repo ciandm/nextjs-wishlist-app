@@ -17,22 +17,22 @@ export const useGetUsersClaimedPosts = () => {
     async () => {
       const { data: usersClaimedPosts } = await posts_claimed
         .select('*')
-        .eq('userId', user?.id ?? '');
+        .eq('user_id', user?.id ?? '');
 
       const { data: wishlistPosts } = await wishlist_post
         .select('*')
-        .in('postId', usersClaimedPosts?.map((post) => post.postId) ?? []);
+        .in('post_id', usersClaimedPosts?.map((post) => post.post_id) ?? []);
 
-      const uniqueWishlistIds = uniq(
-        wishlistPosts?.map((post) => post.wishlistId) ?? []
+      const uniquewishlist_ids = uniq(
+        wishlistPosts?.map((post) => post.wishlist_id) ?? []
       );
 
-      return uniqueWishlistIds.map((id) => ({
-        wishlistId: id,
+      return uniquewishlist_ids.map((id) => ({
+        wishlist_id: id,
         posts:
           wishlistPosts
-            ?.filter((post) => post.wishlistId === id)
-            .map((post) => post.postId) ?? [],
+            ?.filter((post) => post.wishlist_id === id)
+            .map((post) => post.post_id) ?? [],
       }));
     },
     { enabled: !!user?.id }

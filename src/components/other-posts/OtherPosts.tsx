@@ -7,9 +7,9 @@ import { PostFilterOptions } from 'components/post-filter-options/PostFilterOpti
 
 export type StatusFilterType = 'claimed' | 'unclaimed' | 'claimed-by-user';
 
-export const OtherPosts = ({ wishlistId }: { wishlistId: string }) => {
+export const OtherPosts = ({ wishlist_id }: { wishlist_id: string }) => {
   const { data: user } = useGetUser();
-  const { data: posts = [] } = useGetWishlistPosts(wishlistId);
+  const { data: posts = [] } = useGetWishlistPosts(wishlist_id);
 
   const [statusFilter, setStatusFilter] = React.useState<
     StatusFilterType | undefined
@@ -47,7 +47,7 @@ export const OtherPosts = ({ wishlistId }: { wishlistId: string }) => {
   return (
     <chakra.div display="flex" flexDirection="column" gap={4}>
       <PostFilterOptions
-        wishlistId={wishlistId}
+        wishlist_id={wishlist_id}
         onSetUserFilter={handleSetUserFilter}
         onSetStatusFilter={handleSetStatusFilter}
         userFilter={userFilter}
@@ -65,7 +65,7 @@ export const OtherPosts = ({ wishlistId }: { wishlistId: string }) => {
           ]}
         >
           {filteredPosts.map((post) => (
-            <WishlistPost key={post.id} {...post} wishlistId={wishlistId} />
+            <WishlistPost key={post.id} {...post} wishlist_id={wishlist_id} />
           ))}
         </Box>
       ) : (

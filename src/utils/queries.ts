@@ -10,17 +10,17 @@ type PostInQueryData = Omit<WishlistPost, 'claimed_by'> & {
 };
 
 export function updatePostInQueryData({
-  wishlistId,
+  wishlist_id,
   post,
   queryClient,
 }: {
-  wishlistId: string;
+  wishlist_id: string;
   post?: PostInQueryData;
   queryClient: QueryClient;
 }) {
   if (!post) return;
   queryClient.setQueryData<WishlistPost[]>(
-    GET_WISHLIST_POSTS_KEY.query(wishlistId),
+    GET_WISHLIST_POSTS_KEY.query(wishlist_id),
     (oldData) => {
       if (!post) {
         return;
@@ -38,17 +38,17 @@ export function updatePostInQueryData({
 }
 
 export function addPostToQueryData({
-  wishlistId,
+  wishlist_id,
   post,
   queryClient,
 }: {
-  wishlistId: string;
+  wishlist_id: string;
   post?: Post;
   queryClient: QueryClient;
 }) {
   if (!post) return;
   queryClient.setQueryData<WishlistPost[]>(
-    GET_WISHLIST_POSTS_KEY.query(wishlistId),
+    GET_WISHLIST_POSTS_KEY.query(wishlist_id),
     (oldData) => {
       return [...(oldData ?? []), { ...post, claimed_by: [] }];
     }
@@ -56,18 +56,18 @@ export function addPostToQueryData({
 }
 
 export function removePostFromQueryData({
-  wishlistId,
+  wishlist_id,
   post,
   queryClient,
 }: {
-  wishlistId: string;
+  wishlist_id: string;
   post?: Post;
   queryClient: QueryClient;
 }) {
   if (!post) return;
 
   queryClient.setQueryData<WishlistPost[]>(
-    GET_WISHLIST_POSTS_KEY.query(wishlistId),
+    GET_WISHLIST_POSTS_KEY.query(wishlist_id),
     (oldData) => {
       return oldData?.filter((p) => p.id !== post?.id);
     }

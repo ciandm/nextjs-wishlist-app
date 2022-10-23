@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
-import { ReactElement, ReactNode, useState } from 'react';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -12,6 +12,7 @@ import { Database } from 'types/database.types';
 import { theme } from 'src/theme/theme';
 import { NextPage } from 'next';
 import { Layout } from 'components/layout/Layout';
+import { supabase } from 'supabase/client';
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -42,6 +43,22 @@ const App = ({
       },
     })
   );
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        await fetch('/api/set-auth-cookie', {
+          method: 'POST',
+          headers: new Headers({ 'content-Type': 'application/json' }),
+          body: JSON.stringify({ session, event }),
+        });
+      }
+    );
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
 
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
 

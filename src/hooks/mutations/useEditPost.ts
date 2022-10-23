@@ -8,7 +8,7 @@ export type AddPostInput = Pick<
   Post,
   'id' | 'url' | 'name' | 'description' | 'price' | 'is_favorited'
 > & {
-  wishlistId: string;
+  wishlist_id: string;
 };
 
 export const useEditPost = () => {
@@ -40,8 +40,8 @@ export const useEditPost = () => {
       return data?.[0];
     },
     {
-      onSuccess: (post, { wishlistId }) => {
-        updatePostInQueryData({ wishlistId, post, queryClient });
+      onSuccess: (post, { wishlist_id }) => {
+        updatePostInQueryData({ wishlist_id, post, queryClient });
       },
     }
   );

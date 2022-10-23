@@ -8,7 +8,7 @@ export type AddPostInput = Pick<
   Post,
   'name' | 'url' | 'description' | 'price' | 'is_favorited'
 > & {
-  wishlistId: string;
+  wishlist_id: string;
 };
 
 export const useAddPost = () => {
@@ -18,7 +18,7 @@ export const useAddPost = () => {
 
   return useMutation(
     async ({
-      wishlistId,
+      wishlist_id,
       url,
       name,
       description,
@@ -41,20 +41,20 @@ export const useAddPost = () => {
       }
 
       await user_post.insert({
-        userId: user?.id ?? '',
-        postId: post?.[0]?.id ?? '',
+        user_id: user?.id ?? '',
+        post_id: post?.[0]?.id ?? '',
       });
 
       await wishlist_post.insert({
-        wishlistId: wishlistId,
-        postId: post?.[0]?.id ?? '',
+        wishlist_id: wishlist_id,
+        post_id: post?.[0]?.id ?? '',
       });
 
       return post?.[0];
     },
     {
-      onSuccess: (post, { wishlistId }) => {
-        addPostToQueryData({ post, wishlistId, queryClient });
+      onSuccess: (post, { wishlist_id }) => {
+        addPostToQueryData({ post, wishlist_id, queryClient });
       },
     }
   );

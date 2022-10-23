@@ -13,7 +13,7 @@ export const useDeleteWishlist = () => {
 
   return useMutation<unknown, unknown, DeleteWishlistInput>(
     async ({ id }) => {
-      await user_wishlist.delete().eq('wishlistId', id);
+      await user_wishlist.delete().eq('wishlist_id', id);
       return wishlists.delete().eq('id', id);
     },
     {

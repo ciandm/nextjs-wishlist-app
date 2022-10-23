@@ -27,6 +27,7 @@ import { UserPosts } from 'src/components/user-posts/UserPosts';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import { IoCheckmarkCircle, IoInformationCircle } from 'react-icons/io5';
 import { EmptyState } from 'components/empty-state/EmptyState';
+import { withPageAuth } from '@supabase/auth-helpers-nextjs';
 import emptyPosts from 'public/images/empty-posts.svg';
 
 const WishlistPage = () => {
@@ -138,7 +139,7 @@ const WishlistPage = () => {
         </TabList>
         <TabPanels display="flex" flexDirection="column" flex={1} px={4}>
           <TabPanel flex={1} px={0}>
-            <UserPosts wishlistId={id} />
+            <UserPosts wishlist_id={id} />
           </TabPanel>
           <TabPanel
             display="flex"
@@ -148,7 +149,7 @@ const WishlistPage = () => {
             pb={16}
           >
             {otherPosts?.length > 0 ? (
-              <OtherPosts wishlistId={wishlist?.id ?? ''} />
+              <OtherPosts wishlist_id={wishlist?.id ?? ''} />
             ) : (
               <EmptyState
                 mt="auto"
@@ -242,3 +243,5 @@ const InfoMessages = ({
     </>
   );
 };
+
+export const getServerSideProps = withPageAuth({ redirectTo: '/login' });

@@ -5,7 +5,7 @@ import { useGetUser } from 'src/hooks/queries/useGetUser';
 import { StatusFilterType } from 'components/other-posts/OtherPosts';
 
 interface PostFilterOptionsProps {
-  wishlistId: string;
+  wishlist_id: string;
   userFilter?: string;
   statusFilter?: StatusFilterType;
   onSetStatusFilter?: (statusFilter?: StatusFilterType) => void;
@@ -13,13 +13,13 @@ interface PostFilterOptionsProps {
 }
 
 export const PostFilterOptions = ({
-  wishlistId,
+  wishlist_id,
   onSetStatusFilter,
   statusFilter,
   onSetUserFilter,
   userFilter,
 }: PostFilterOptionsProps) => {
-  const { data: wishlistUsers } = useGetWishlistUsers(wishlistId);
+  const { data: wishlistUsers } = useGetWishlistUsers(wishlist_id);
   const { data: user } = useGetUser();
 
   return (

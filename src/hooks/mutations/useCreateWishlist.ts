@@ -39,8 +39,8 @@ export const useCreateWishlist = () => {
 
       await user_wishlist.insert(
         usersData?.map((user) => ({
-          userId: user.id,
-          wishlistId: wishlistData?.id ?? '',
+          user_id: user.id,
+          wishlist_id: wishlistData?.id ?? '',
         })) ?? []
       );
 

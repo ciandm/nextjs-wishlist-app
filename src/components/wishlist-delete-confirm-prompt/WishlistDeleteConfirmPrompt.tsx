@@ -5,14 +5,14 @@ import { useDeleteWishlist } from 'src/hooks/mutations/useDeleteWishlist';
 
 interface WishlistDeleteConfirmPromptProps
   extends Omit<ModalProps, 'children'> {
-  wishlistId: string;
+  wishlist_id: string;
   onCancel: () => void;
 }
 
 export const WishlistDeleteConfirmPrompt = ({
   isOpen,
   onClose,
-  wishlistId,
+  wishlist_id,
 }: WishlistDeleteConfirmPromptProps) => {
   const { mutate: handleDeleteWishlist, isLoading: isDeletingWishlist } =
     useDeleteWishlist();
@@ -24,7 +24,7 @@ export const WishlistDeleteConfirmPrompt = ({
       description="Deleting this wishlist will remove it forever, along with the data. This action cannot be undone."
       onConfirm={() =>
         handleDeleteWishlist(
-          { id: wishlistId ?? '' },
+          { id: wishlist_id ?? '' },
           {
             onSuccess: () => {
               toast({

@@ -6,20 +6,20 @@ export const GET_WISHLIST_USERS_KEY = {
   query: (id: string) => [{ ...GET_WISHLIST_USERS_KEY.base, id }],
 };
 
-export const useGetWishlistUsers = (wishlistId: string) => {
+export const useGetWishlistUsers = (wishlist_id: string) => {
   const { user_wishlist, users } = useSupabaseClient();
   return useQuery(
-    GET_WISHLIST_USERS_KEY.query(wishlistId),
+    GET_WISHLIST_USERS_KEY.query(wishlist_id),
     async () => {
       const { data: usersForWishlist } = await user_wishlist
         .select('*')
-        .eq('wishlistId', wishlistId);
+        .eq('wishlist_id', wishlist_id);
 
       if (!usersForWishlist) return [];
 
       const { data: usersData } = await users.select('*').in(
         'id',
-        usersForWishlist.map((user) => user.userId)
+        usersForWishlist.map((user) => user.user_id)
       );
 
       return (
@@ -30,6 +30,6 @@ export const useGetWishlistUsers = (wishlistId: string) => {
         })) ?? []
       );
     },
-    { enabled: !!wishlistId }
+    { enabled: !!wishlist_id }
   );
 };

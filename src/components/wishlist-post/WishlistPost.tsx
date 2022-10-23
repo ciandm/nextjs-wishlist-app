@@ -31,7 +31,7 @@ import { PostDeleteConfirmPrompt } from 'components/post-delete-confirm-prompt/P
 import { useMarkAsPurchased } from 'hooks/mutations/useMarkAsPurchased';
 
 type PostProps = Post & {
-  wishlistId: string;
+  wishlist_id: string;
   claimed_by?: { id: string }[];
   onEdit?: (
     data: Pick<Post, 'description' | 'price' | 'name' | 'url' | 'id'>
@@ -48,7 +48,7 @@ export const WishlistPost = ({
   price,
   url,
   created_by,
-  wishlistId,
+  wishlist_id,
   claimed_by,
   onEdit,
   is_purchased: isPurchased,
@@ -57,16 +57,16 @@ export const WishlistPost = ({
 }: PostProps) => {
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const { data: user } = useGetUser();
-  const { data: users } = useGetWishlistUsers(wishlistId);
+  const { data: users } = useGetWishlistUsers(wishlist_id);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast({ position: 'top' });
 
   const { mutate: handleClaimPost, isLoading: isLoadingClaimPost } =
-    useClaimPost({ wishlistId });
+    useClaimPost({ wishlist_id });
   const { mutate: handleUnClaimPost, isLoading: isLoadingUnClaimPost } =
-    useUnclaimPost({ wishlistId });
+    useUnclaimPost({ wishlist_id });
   const { mutate: handleMarkAsPurchased, isLoading: isLoadingMarkAsPurchased } =
-    useMarkAsPurchased({ wishlistId });
+    useMarkAsPurchased({ wishlist_id });
 
   const createdByUser = users?.find((u) => u.id === created_by);
 
@@ -176,7 +176,7 @@ export const WishlistPost = ({
                   alignItems="center"
                   onClick={() =>
                     handleMarkAsPurchased({
-                      postId: id,
+                      post_id: id,
                       isPurchased: !isPurchased,
                     })
                   }
@@ -254,7 +254,7 @@ export const WishlistPost = ({
                           isClaimedByUser
                             ? () =>
                                 handleUnClaimPost(
-                                  { postId: id },
+                                  { post_id: id },
                                   {
                                     onSuccess: () =>
                                       toast({
@@ -267,7 +267,7 @@ export const WishlistPost = ({
                                 )
                             : () =>
                                 handleClaimPost(
-                                  { postId: id },
+                                  { post_id: id },
                                   {
                                     onSuccess: () =>
                                       toast({
@@ -299,8 +299,8 @@ export const WishlistPost = ({
       <PostDeleteConfirmPrompt
         isOpen={isDeletingPost}
         onClose={() => setIsDeletingPost(false)}
-        wishlistId={wishlistId}
-        postId={id}
+        wishlist_id={wishlist_id}
+        post_id={id}
         onCancel={() => setIsDeletingPost(false)}
       />
     </>

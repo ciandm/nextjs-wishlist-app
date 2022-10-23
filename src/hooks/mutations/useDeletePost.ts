@@ -3,8 +3,8 @@ import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
 import { GET_WISHLIST_POSTS_KEY } from 'src/hooks/queries/useGetWishlistPosts';
 
 type DeletePostInput = {
-  postId: string;
-  wishlistId: string;
+  post_id: string;
+  wishlist_id: string;
 };
 
 export const useDeletePost = () => {
@@ -13,15 +13,17 @@ export const useDeletePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation<unknown, unknown, DeletePostInput>(
-    async ({ postId }) => {
-      await user_post.delete().eq('postId', postId);
-      await wishlist_post.delete().eq('postId', postId);
-      await posts_claimed.delete().eq('postId', postId);
-      await posts.delete().eq('id', postId);
+    async ({ post_id }) => {
+      await user_post.delete().eq('post_id', post_id);
+      await wishlist_post.delete().eq('post_id', post_id);
+      await posts_claimed.delete().eq('post_id', post_id);
+      await posts.delete().eq('id', post_id);
     },
     {
-      onSuccess: (_, { wishlistId }) => {
-        queryClient.invalidateQueries(GET_WISHLIST_POSTS_KEY.query(wishlistId));
+      onSuccess: (_, { wishlist_id }) => {
+        queryClient.invalidateQueries(
+          GET_WISHLIST_POSTS_KEY.query(wishlist_id)
+        );
       },
     }
   );

@@ -13,10 +13,11 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
-import { UpdateUserForm } from 'components/update-user-form/UpdateUserForm';
 import { UserWishlists } from 'components/user-wishlists/UserWishlists';
 import { UserShoppingList } from 'components/user-shopping-list/UserShoppingList';
 import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
+
+import { withPageAuth } from '@supabase/auth-helpers-nextjs';
 
 const Home: NextPage = () => {
   const { isLoading: isLoadingWishlists } = useGetWishlistsByUserId();
@@ -90,9 +91,10 @@ const Home: NextPage = () => {
           </Tabs>
         </chakra.div>
       </chakra.div>
-      <UpdateUserForm />
     </>
   );
 };
 
 export default Home;
+
+export const getServerSideProps = withPageAuth({ redirectTo: '/login' });

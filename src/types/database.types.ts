@@ -46,44 +46,44 @@ export interface Database {
       }
       posts_claimed: {
         Row: {
-          userId: string
-          postId: string
+          user_id: string
+          post_id: string
         }
         Insert: {
-          userId: string
-          postId: string
+          user_id: string
+          post_id: string
         }
         Update: {
-          userId?: string
-          postId?: string
+          user_id?: string
+          post_id?: string
         }
       }
       user_post: {
         Row: {
-          userId: string
-          postId: string
+          user_id: string
+          post_id: string
         }
         Insert: {
-          userId: string
-          postId: string
+          user_id: string
+          post_id: string
         }
         Update: {
-          userId?: string
-          postId?: string
+          user_id?: string
+          post_id?: string
         }
       }
       user_wishlist: {
         Row: {
-          userId: string
-          wishlistId: string
+          user_id: string
+          wishlist_id: string
         }
         Insert: {
-          userId: string
-          wishlistId: string
+          user_id: string
+          wishlist_id: string
         }
         Update: {
-          userId?: string
-          wishlistId?: string
+          user_id?: string
+          wishlist_id?: string
         }
       }
       users: {
@@ -105,16 +105,16 @@ export interface Database {
       }
       wishlist_post: {
         Row: {
-          wishlistId: string
-          postId: string
+          wishlist_id: string
+          post_id: string
         }
         Insert: {
-          wishlistId: string
-          postId: string
+          wishlist_id: string
+          post_id: string
         }
         Update: {
-          wishlistId?: string
-          postId?: string
+          wishlist_id?: string
+          post_id?: string
         }
       }
       wishlists: {

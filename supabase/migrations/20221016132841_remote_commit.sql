@@ -113,14 +113,14 @@ GRANT ALL ON TABLE public.wishlists TO service_role;
 
 CREATE TABLE IF NOT EXISTS public.user_post
 (
-    "userId" uuid NOT NULL,
-    "postId" uuid NOT NULL,
-    CONSTRAINT user_post_pkey PRIMARY KEY ("userId", "postId"),
-    CONSTRAINT "user_post_postId_fkey" FOREIGN KEY ("postId")
+    "user_id" uuid NOT NULL,
+    "post_id" uuid NOT NULL,
+    CONSTRAINT user_post_pkey PRIMARY KEY ("user_id", "post_id"),
+    CONSTRAINT "user_post_post_id_fkey" FOREIGN KEY ("post_id")
         REFERENCES public.posts (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT "user_post_userId_fkey" FOREIGN KEY ("userId")
+    CONSTRAINT "user_post_user_id_fkey" FOREIGN KEY ("user_id")
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
@@ -130,14 +130,14 @@ TABLESPACE pg_default;
 
 CREATE TABLE IF NOT EXISTS public.wishlist_post
 (
-    "wishlistId" uuid NOT NULL,
-    "postId" uuid,
-    CONSTRAINT wishlist_post_pkey PRIMARY KEY ("wishlistId"),
-    CONSTRAINT "wishlist_post_postId_fkey" FOREIGN KEY ("postId")
+    "wishlist_id" uuid NOT NULL,
+    "post_id" uuid,
+    CONSTRAINT wishlist_post_pkey PRIMARY KEY ("wishlist_id"),
+    CONSTRAINT "wishlist_post_post_id_fkey" FOREIGN KEY ("post_id")
         REFERENCES public.posts (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT "wishlist_post_wishlistId_fkey" FOREIGN KEY ("wishlistId")
+    CONSTRAINT "wishlist_post_wishlist_id_fkey" FOREIGN KEY ("wishlist_id")
         REFERENCES public.wishlists (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
@@ -173,14 +173,14 @@ GRANT ALL ON TABLE public.user_post TO service_role;
 
 CREATE TABLE IF NOT EXISTS public.user_wishlist
 (
-    "userId" uuid NOT NULL,
-    "wishlistId" uuid NOT NULL,
-    CONSTRAINT user_wishlist_pkey PRIMARY KEY ("userId", "wishlistId"),
-    CONSTRAINT "user_wishlist_userId_fkey" FOREIGN KEY ("userId")
+    "user_id" uuid NOT NULL,
+    "wishlist_id" uuid NOT NULL,
+    CONSTRAINT user_wishlist_pkey PRIMARY KEY ("user_id", "wishlist_id"),
+    CONSTRAINT "user_wishlist_user_id_fkey" FOREIGN KEY ("user_id")
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT "user_wishlist_wishlistId_fkey" FOREIGN KEY ("wishlistId")
+    CONSTRAINT "user_wishlist_wishlist_id_fkey" FOREIGN KEY ("wishlist_id")
         REFERENCES public.wishlists (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
@@ -203,14 +203,14 @@ GRANT ALL ON TABLE public.user_wishlist TO service_role;
 
 CREATE TABLE IF NOT EXISTS public.posts_claimed
 (
-    "userId" uuid NOT NULL,
-    "postId" uuid NOT NULL,
-    CONSTRAINT posts_claimed_pkey PRIMARY KEY ("userId", "postId"),
-    CONSTRAINT "posts_claimed_postId_fkey" FOREIGN KEY ("postId")
+    "user_id" uuid NOT NULL,
+    "post_id" uuid NOT NULL,
+    CONSTRAINT posts_claimed_pkey PRIMARY KEY ("user_id", "post_id"),
+    CONSTRAINT "posts_claimed_post_id_fkey" FOREIGN KEY ("post_id")
         REFERENCES public.posts (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT "posts_claimed_userId_fkey" FOREIGN KEY ("userId")
+    CONSTRAINT "posts_claimed_user_id_fkey" FOREIGN KEY ("user_id")
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION

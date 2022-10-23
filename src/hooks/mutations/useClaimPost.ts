@@ -9,29 +9,29 @@ import {
 import { updatePostInQueryData } from 'utils/queries';
 
 export type ClaimPostInput = {
-  postId: string;
+  post_id: string;
 };
 
-export const useClaimPost = ({ wishlistId }: { wishlistId: string }) => {
+export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
   const { posts_claimed } = useSupabaseClient();
   const queryClient = useQueryClient();
   const user = useUser();
 
   return useMutation(
-    async ({ postId }: ClaimPostInput) => {
-      await posts_claimed.insert({ postId, userId: user?.id ?? '' });
+    async ({ post_id }: ClaimPostInput) => {
+      await posts_claimed.insert({ post_id, user_id: user?.id ?? '' });
     },
     {
-      onSuccess: (_, { postId }) => {
+      onSuccess: (_, { post_id }) => {
         const post = queryClient
           .getQueryData<WishlistPost[]>(
-            GET_WISHLIST_POSTS_KEY.query(wishlistId)
+            GET_WISHLIST_POSTS_KEY.query(wishlist_id)
           )
-          ?.find((post) => post.id === postId);
+          ?.find((post) => post.id === post_id);
 
         if (post) {
           updatePostInQueryData({
-            wishlistId,
+            wishlist_id,
             post: {
               ...post,
               claimed_by: [...post?.claimed_by, { id: user?.id ?? '' }],
@@ -40,30 +40,30 @@ export const useClaimPost = ({ wishlistId }: { wishlistId: string }) => {
           });
         }
 
-        queryClient.setQueryData<{ wishlistId: string; posts: string[] }[]>(
+        queryClient.setQueryData<{ wishlist_id: string; posts: string[] }[]>(
           GET_USERS_CLAIMED_POSTS_KEY.query(user?.id ?? ''),
           (oldData) => {
-            if (oldData?.find((data) => data.wishlistId === wishlistId)) {
+            if (oldData?.find((data) => data.wishlist_id === wishlist_id)) {
               return oldData?.map((_data) => {
-                if (_data.wishlistId === wishlistId) {
+                if (_data.wishlist_id === wishlist_id) {
                   return {
-                    wishlistId: _data.wishlistId,
-                    posts: [..._data.posts, postId],
+                    wishlist_id: _data.wishlist_id,
+                    posts: [..._data.posts, post_id],
                   };
                 }
                 return _data;
               });
             }
             console.log('out here');
-            return [...(oldData ?? []), { wishlistId, posts: [postId] }];
+            return [...(oldData ?? []), { wishlist_id, posts: [post_id] }];
           }
         );
 
         queryClient.setQueryData<WishlistPost[]>(
-          GET_WISHLIST_POSTS_KEY.query(wishlistId ?? ''),
+          GET_WISHLIST_POSTS_KEY.query(wishlist_id ?? ''),
           (oldData) => {
             return oldData?.map((data) => {
-              if (data.id === postId) {
+              if (data.id === post_id) {
                 return {
                   ...data,
                   claimed_by: [...data?.claimed_by, { id: user?.id ?? '' }],

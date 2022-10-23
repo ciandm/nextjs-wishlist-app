@@ -9,29 +9,31 @@ import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetUsersClaime
 import { useGetUser } from 'src/hooks/queries/useGetUser';
 import { updatePostInQueryData } from 'utils/queries';
 
-export const useUnclaimPost = ({ wishlistId }: { wishlistId: string }) => {
+export const useUnclaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
   const { posts_claimed } = useSupabaseClient();
   const queryClient = useQueryClient();
   const { data: user } = useGetUser();
 
   return useMutation(
-    async ({ postId }: ClaimPostInput) => {
-      await posts_claimed.delete().eq('postId', postId);
+    async ({ post_id }: ClaimPostInput) => {
+      await posts_claimed.delete().eq('post_id', post_id);
     },
     {
-      onSuccess: (_, { postId }) => {
-        queryClient.setQueryData<{ wishlistId: string; posts: string[] }[]>(
+      onSuccess: (_, { post_id }) => {
+        queryClient.setQueryData<{ wishlist_id: string; posts: string[] }[]>(
           GET_USERS_CLAIMED_POSTS_KEY.query(user?.id ?? ''),
           (oldData) => {
-            if (oldData?.find(({ wishlistId }) => wishlistId === wishlistId)) {
+            if (
+              oldData?.find(({ wishlist_id }) => wishlist_id === wishlist_id)
+            ) {
               return oldData
                 ?.map((data) => {
-                  if (data.wishlistId === wishlistId) {
+                  if (data.wishlist_id === wishlist_id) {
                     const newPosts = data.posts.filter(
-                      (post) => post !== postId
+                      (post) => post !== post_id
                     );
                     return {
-                      wishlistId: data.wishlistId,
+                      wishlist_id: data.wishlist_id,
                       posts: newPosts,
                     };
                   }
@@ -43,10 +45,10 @@ export const useUnclaimPost = ({ wishlistId }: { wishlistId: string }) => {
         );
 
         queryClient.setQueryData<WishlistPost[]>(
-          GET_WISHLIST_POSTS_KEY.query(wishlistId ?? ''),
+          GET_WISHLIST_POSTS_KEY.query(wishlist_id ?? ''),
           (oldData) => {
             return oldData?.map((data) => {
-              if (data.id === postId) {
+              if (data.id === post_id) {
                 return {
                   ...data,
                   claimed_by: data.claimed_by.filter(

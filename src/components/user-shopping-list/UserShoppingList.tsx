@@ -17,7 +17,7 @@ export const UserShoppingList = () => {
   const validWishlists =
     usersWishlists?.filter((wishlist) =>
       wishlistsWithPostsClaimedByUser
-        ?.map(({ wishlistId }) => wishlistId)
+        ?.map(({ wishlist_id }) => wishlist_id)
         .includes(wishlist.id)
     ) ?? [];
 
@@ -97,7 +97,7 @@ const WishlistGroup = ({ id, name }: { id: string; name: string }) => {
         {usersClaimedPosts?.map((post) => (
           <WishlistPost
             isInShoppingList
-            wishlistId={id}
+            wishlist_id={id}
             key={post.id}
             {...post}
           />

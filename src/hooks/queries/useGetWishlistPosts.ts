@@ -13,26 +13,26 @@ export const GET_WISHLIST_POSTS_KEY = {
   query: (id: string) => [{ ...GET_WISHLIST_POSTS_KEY.base, id }],
 };
 
-export const useGetWishlistPosts = (wishlistId: string) => {
+export const useGetWishlistPosts = (wishlist_id: string) => {
   const { wishlist_post, posts, posts_claimed } = useSupabaseClient();
 
   return useQuery(
-    GET_WISHLIST_POSTS_KEY.query(wishlistId),
+    GET_WISHLIST_POSTS_KEY.query(wishlist_id),
     async () => {
       const result = await wishlist_post
         .select('*')
-        .eq('wishlistId', wishlistId);
+        .eq('wishlist_id', wishlist_id);
 
       if (!result.data) return [];
 
       const { data: postsData } = await posts.select('*').in(
         'id',
-        result.data.map((post) => post.postId)
+        result.data.map((post) => post.post_id)
       );
 
       const { data: postsClaimedData } = await posts_claimed
         .select('*')
-        .in('postId', postsData?.map((post) => post.id) ?? []);
+        .in('post_id', postsData?.map((post) => post.id) ?? []);
 
       return (
         postsData?.map<WishlistPost>((post) => ({
@@ -46,11 +46,11 @@ export const useGetWishlistPosts = (wishlistId: string) => {
           url: post?.url ?? '',
           claimed_by:
             postsClaimedData
-              ?.filter((postClaimed) => postClaimed.postId === post.id)
-              .map(({ userId }) => ({ id: userId })) ?? [],
+              ?.filter((postClaimed) => postClaimed.post_id === post.id)
+              .map(({ user_id }) => ({ id: user_id })) ?? [],
         })) ?? []
       );
     },
-    { enabled: !!wishlistId, keepPreviousData: true }
+    { enabled: !!wishlist_id, keepPreviousData: true }
   );
 };

@@ -3,26 +3,30 @@ import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
 import { updatePostInQueryData } from 'utils/queries';
 
 export type ClaimPostInput = {
-  postId: string;
+  post_id: string;
   isPurchased: boolean;
 };
 
-export const useMarkAsPurchased = ({ wishlistId }: { wishlistId: string }) => {
+export const useMarkAsPurchased = ({
+  wishlist_id,
+}: {
+  wishlist_id: string;
+}) => {
   const { posts } = useSupabaseClient();
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({ postId, isPurchased }: ClaimPostInput) => {
+    async ({ post_id, isPurchased }: ClaimPostInput) => {
       const { data } = await posts
         .update({ is_purchased: isPurchased })
-        .eq('id', postId)
+        .eq('id', post_id)
         .select();
 
       return data?.[0];
     },
     {
       onSuccess: (post) => {
-        updatePostInQueryData({ wishlistId, post, queryClient });
+        updatePostInQueryData({ wishlist_id, post, queryClient });
       },
     }
   );

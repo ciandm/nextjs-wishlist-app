@@ -17,13 +17,13 @@ export const useGetWishlistsByUserId = () => {
       console.log('--- [useGetWishlistsByUserId] fetching');
       const { data: wishlistsById } = await user_wishlist
         .select('*')
-        .eq('userId', user?.id);
+        .eq('user_id', user?.id);
 
       if (!wishlistsById) return [];
 
       const { data: wishlistsData } = await wishlists.select('*').in(
         'id',
-        wishlistsById.map((wishlist) => wishlist.wishlistId)
+        wishlistsById.map((wishlist) => wishlist.wishlist_id)
       );
 
       console.log('--- [useGetWishlistsByUserId] fetched', wishlistsData);

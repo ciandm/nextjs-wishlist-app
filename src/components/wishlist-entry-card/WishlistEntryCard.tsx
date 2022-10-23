@@ -37,7 +37,7 @@ export const WishlistEntryCard = ({
   const { data: wishlistsWithPostsClaimedByUser } = useGetUsersClaimedPosts();
 
   const postsClaimedByUser =
-    wishlistsWithPostsClaimedByUser?.find((w) => w.wishlistId === id)?.posts ??
+    wishlistsWithPostsClaimedByUser?.find((w) => w.wishlist_id === id)?.posts ??
     [];
 
   const otherPostsCount = wishlistPosts.filter(
@@ -142,7 +142,7 @@ export const WishlistEntryCard = ({
         isOpen={isDeleteConfirmOpen}
         onCancel={() => setIsDeleteConfirmOpen(false)}
         onClose={() => setIsDeleteConfirmOpen(false)}
-        wishlistId={id ?? ''}
+        wishlist_id={id ?? ''}
       />
     </>
   );

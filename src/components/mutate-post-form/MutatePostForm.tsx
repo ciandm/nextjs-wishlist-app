@@ -69,18 +69,18 @@ export interface MutatePostFormState {
 interface MutatePostFormProps {
   onClose?: () => void;
   isOpen?: boolean;
-  wishlistId: string;
+  wishlist_id: string;
   initialData?: MutatePostFormState;
   isEditing?: boolean;
-  postId?: string;
+  post_id?: string;
   type?: 'modal' | 'default';
 }
 
 export const MutatePostForm = ({
   isEditing = false,
   initialData,
-  wishlistId,
-  postId,
+  wishlist_id,
+  post_id,
   type = 'default',
   isOpen,
   onClose,
@@ -124,8 +124,8 @@ export const MutatePostForm = ({
         {
           ...passedData,
           is_favorited: isFavorite,
-          id: postId ?? '',
-          wishlistId,
+          id: post_id ?? '',
+          wishlist_id,
         },
         {
           onSuccess: () => {
@@ -144,7 +144,7 @@ export const MutatePostForm = ({
     }
 
     handleAddPost(
-      { ...passedData, is_favorited: isFavorite, wishlistId },
+      { ...passedData, is_favorited: isFavorite, wishlist_id },
       {
         onSuccess: () => {
           handleOnClose();
