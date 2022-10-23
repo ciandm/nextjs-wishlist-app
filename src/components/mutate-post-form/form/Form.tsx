@@ -115,10 +115,16 @@ export const Form = ({
           <Input
             bg="white"
             borderColor="gray.300"
+            placeholder="https://www.example.com/product/123"
             {...register('url', {
               required: {
                 value: true,
                 message: 'This is required',
+              },
+              pattern: {
+                value:
+                  /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+                message: 'Must be a valid url',
               },
               minLength: 1,
             })}

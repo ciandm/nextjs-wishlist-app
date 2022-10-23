@@ -1,7 +1,8 @@
-import { ModalProps, useToast } from '@chakra-ui/react';
+import { ModalProps } from '@chakra-ui/react';
 import { ConfirmPrompt } from 'components/confirm-prompt/ConfirmPrompt';
 import React from 'react';
 import { useDeleteWishlist } from 'src/hooks/mutations/useDeleteWishlist';
+import { useToast } from 'hooks/useToast';
 
 interface WishlistDeleteConfirmPromptProps
   extends Omit<ModalProps, 'children'> {
@@ -31,7 +32,6 @@ export const WishlistDeleteConfirmPrompt = ({
                 title: 'Wishlist deleted',
                 description: 'The wishlist has been deleted successfully',
                 status: 'success',
-                position: 'top',
               });
             },
           }

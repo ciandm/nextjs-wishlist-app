@@ -3,7 +3,7 @@ import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
 import { useUser } from '@supabase/auth-helpers-react';
 import { Post } from 'types/utils';
 import { addPostToQueryData } from 'utils/queries';
-import { useToast } from '@chakra-ui/react';
+import { useToast } from 'hooks/useToast';
 
 export type AddPostInput = Pick<
   Post,

@@ -1,7 +1,8 @@
-import { ModalProps, useToast } from '@chakra-ui/react';
+import { ModalProps } from '@chakra-ui/react';
 import { ConfirmPrompt } from 'components/confirm-prompt/ConfirmPrompt';
 import React from 'react';
 import { useDeletePost } from 'src/hooks/mutations/useDeletePost';
+import { useToast } from 'hooks/useToast';
 
 interface PostDeleteConfirmPromptProps extends Omit<ModalProps, 'children'> {
   wishlist_id: string;
@@ -32,7 +33,6 @@ export const PostDeleteConfirmPrompt = ({
                 title: 'Post deleted',
                 description: 'The post has been deleted',
                 status: 'success',
-                position: 'top',
               });
             },
           }

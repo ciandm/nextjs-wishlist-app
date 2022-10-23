@@ -4,7 +4,6 @@ import {
   chakra,
   Link,
   Button,
-  useToast,
   Flex,
   Skeleton,
   SkeletonCircle,
@@ -29,6 +28,7 @@ import debounce from 'lodash/debounce';
 import { Post } from 'types/utils';
 import { PostDeleteConfirmPrompt } from 'components/post-delete-confirm-prompt/PostDeleteConfirmPrompt';
 import { useMarkAsPurchased } from 'hooks/mutations/useMarkAsPurchased';
+import { useToast } from 'hooks/useToast';
 
 type PostProps = Post & {
   wishlist_id: string;
@@ -59,7 +59,7 @@ export const WishlistPost = ({
   const user = useUser();
   const { data: users } = useGetWishlistUsers(wishlist_id);
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast({ position: 'top' });
+  const toast = useToast();
 
   const { mutate: handleClaimPost, isLoading: isLoadingClaimPost } =
     useClaimPost({ wishlist_id });

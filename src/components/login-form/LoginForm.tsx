@@ -10,7 +10,6 @@ import {
   InputRightElement,
   Link,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -19,6 +18,7 @@ import NextLink from 'next/link';
 import { FormWrapper } from 'components/form-wrapper/FormWrapper';
 import { useLogin } from 'hooks/mutations/useLogin';
 import axios from 'axios';
+import { useToast } from 'hooks/useToast';
 
 interface LoginFormState {
   email: string;

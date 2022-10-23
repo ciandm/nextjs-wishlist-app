@@ -9,7 +9,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Text,
-  useToast,
   ModalProps,
 } from '@chakra-ui/react';
 import { useAddPost } from 'hooks/mutations/useAddPost';
@@ -17,6 +16,7 @@ import React, { useEffect } from 'react';
 import { useEditPost } from 'hooks/mutations/useEditPost';
 import { Form } from './form/Form';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useToast } from 'hooks/useToast';
 
 interface MutatePostFormPropsModal extends ModalProps {
   title: string;
@@ -114,7 +114,6 @@ export const MutatePostForm = ({
           onSuccess: () => {
             handleOnClose();
             toast({
-              position: 'top',
               title: 'Post edited',
               status: 'success',
               description: 'Post edited successfully.',
@@ -132,7 +131,6 @@ export const MutatePostForm = ({
         onSuccess: () => {
           handleOnClose();
           toast({
-            position: 'top',
             title: 'Post added',
             status: 'success',
             description: 'Post added successfully.',

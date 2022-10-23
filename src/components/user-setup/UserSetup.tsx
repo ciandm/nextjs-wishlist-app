@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSupabaseClient } from 'supabase/useSupabaseClient';
-import { useToast } from '@chakra-ui/react';
+import { useToast } from 'hooks/useToast';
 
 export const UserSetup = () => {
   const router = useRouter();

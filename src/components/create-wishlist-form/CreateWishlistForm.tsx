@@ -16,7 +16,6 @@ import {
   Text,
   IconButton,
   Icon,
-  useToast,
   FormErrorMessage,
   Flex,
   Box,
@@ -25,6 +24,7 @@ import {
 import { useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { IoRemove } from 'react-icons/io5';
+import { useToast } from 'hooks/useToast';
 
 interface CreateWishlistFormState {
   name: string;
@@ -90,7 +90,6 @@ export const CreateWishlistForm = ({
             title: 'Wishlist created',
             status: 'success',
             description: `Wishlist created successfully with ${wishlistUsers?.length} users`,
-            position: 'top',
           });
         },
         onError: (error) => {
@@ -99,7 +98,6 @@ export const CreateWishlistForm = ({
               title: 'Something went wrong',
               description: error.message,
               status: 'error',
-              position: 'top-right',
             });
           }
         },

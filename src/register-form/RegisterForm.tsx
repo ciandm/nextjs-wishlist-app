@@ -10,7 +10,6 @@ import {
   InputRightElement,
   Link,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import React, { useState } from 'react';
@@ -20,6 +19,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { FormWrapper } from 'components/form-wrapper/FormWrapper';
 import { AuthError } from '@supabase/supabase-js';
+import { useToast } from 'hooks/useToast';
 
 interface RegisterFormState {
   name: string;
