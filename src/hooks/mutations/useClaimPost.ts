@@ -20,9 +20,8 @@ export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
   return useMutation(
     async ({ post_id }: ClaimPostInput) => {
       const postResponse = await posts
-        .select('*', { head: true, count: 'exact' })
-        .eq('id', post_id)
-        .single();
+        .select('*', { count: 'exact' })
+        .eq('id', post_id);
 
       if (!postResponse.data) {
         throw new Error('That post does not exist');
