@@ -114,9 +114,13 @@ export const WishlistPost = ({
               />
             </SkeletonCircle>
             <Flex w="full" gap={2} flexDirection="column" overflow="hidden">
-              <Flex display="flex" justifyContent="space-between">
-                <Skeleton isLoaded={!isLoadingPost} h={6}>
-                  <Flex alignItems="center">
+              <Flex
+                display="flex"
+                justifyContent="space-between"
+                overflow="hidden"
+              >
+                <Skeleton isLoaded={!isLoadingPost} h={6} overflow="hidden">
+                  <Flex alignItems="center" overflow="hidden">
                     <Icon
                       mr={2}
                       color={isFavorited ? 'yellow.500' : 'gray.500'}
@@ -125,12 +129,14 @@ export const WishlistPost = ({
                     <Text
                       overflow="hidden"
                       textOverflow="ellipsis"
-                      whiteSpace="nowrap"
                       fontSize="md"
                       fontWeight="medium"
                       color="gray.800"
                       as="h2"
                       mr={2}
+                      noOfLines={1}
+                      w="full"
+                      wordBreak="break-all"
                     >
                       {name ?? 'Loading...'}
                     </Text>

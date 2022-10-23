@@ -41,7 +41,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     const password = localStorage.getItem('password');
-    const email = localStorage.getItem('password');
+    const email = localStorage.getItem('email');
     if (password) {
       setValue('password', password);
     }
