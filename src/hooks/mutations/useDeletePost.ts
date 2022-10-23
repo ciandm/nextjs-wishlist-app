@@ -8,14 +8,11 @@ type DeletePostInput = {
 };
 
 export const useDeletePost = () => {
-  const { posts, user_post, wishlist_post, posts_claimed } =
-    useSupabaseClient();
+  const { posts, posts_claimed } = useSupabaseClient();
   const queryClient = useQueryClient();
 
   return useMutation<unknown, unknown, DeletePostInput>(
     async ({ post_id }) => {
-      await user_post.delete().eq('post_id', post_id);
-      await wishlist_post.delete().eq('post_id', post_id);
       await posts_claimed.delete().eq('post_id', post_id);
       await posts.delete().eq('id', post_id);
     },

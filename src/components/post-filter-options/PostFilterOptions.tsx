@@ -1,7 +1,7 @@
 import { HStack, Select } from '@chakra-ui/react';
 import React from 'react';
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { StatusFilterType } from 'components/other-posts/OtherPosts';
 
 interface PostFilterOptionsProps {
@@ -20,7 +20,7 @@ export const PostFilterOptions = ({
   userFilter,
 }: PostFilterOptionsProps) => {
   const { data: wishlistUsers } = useGetWishlistUsers(wishlist_id);
-  const { data: user } = useGetUser();
+  const user = useUser();
 
   return (
     <>

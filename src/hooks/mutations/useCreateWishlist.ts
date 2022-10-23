@@ -26,16 +26,16 @@ export const useCreateWishlist = () => {
         );
 
       if (count !== passedUsers?.length) {
-        throw new Error("One or more users don't exist");
+        throw new Error('One or more users do not exist');
       }
 
-      const result = await wishlists
-        .insert({ name, created_by: user?.id })
+      const { data, error } = await wishlists
+        .insert({ name, user_id: user?.id })
         .select();
 
-      if (!result) throw new Error('Failed to create wishlist');
+      if (error) throw new Error('Failed to create wishlist');
 
-      const wishlistData = result?.data?.[0];
+      const wishlistData = data?.[0];
 
       await user_wishlist.insert(
         usersData?.map((user) => ({

@@ -22,7 +22,7 @@ import {
 } from 'react-icons/io5';
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
 import { UserAvatar } from 'src/components/user-avatar/UserAvatar';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useClaimPost } from 'src/hooks/mutations/useClaimPost';
 import { useUnclaimPost } from 'src/hooks/mutations/useUnclaimPost';
 import debounce from 'lodash/debounce';
@@ -47,7 +47,7 @@ export const WishlistPost = ({
   name,
   price,
   url,
-  created_by,
+  user_id,
   wishlist_id,
   claimed_by,
   onEdit,
@@ -56,7 +56,7 @@ export const WishlistPost = ({
   isInShoppingList,
 }: PostProps) => {
   const [isDeletingPost, setIsDeletingPost] = useState(false);
-  const { data: user } = useGetUser();
+  const user = useUser();
   const { data: users } = useGetWishlistUsers(wishlist_id);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast({ position: 'top' });
@@ -68,12 +68,12 @@ export const WishlistPost = ({
   const { mutate: handleMarkAsPurchased, isLoading: isLoadingMarkAsPurchased } =
     useMarkAsPurchased({ wishlist_id });
 
-  const createdByUser = users?.find((u) => u.id === created_by);
+  const createdByUser = users?.find((u) => u.id === user_id);
 
   const usersWhoHaveClaimed =
     users?.filter((u) => claimed_by?.some((c) => c.id === u.id)) ?? [];
 
-  const isAuthor = createdByUser?.id === user?.id;
+  const isAuthor = user_id === user?.id;
 
   const isUnclaimed = !isAuthor && usersWhoHaveClaimed?.length === 0;
   const isClaimedByUser = claimed_by?.some((c) => c.id === user?.id);
@@ -94,7 +94,8 @@ export const WishlistPost = ({
 
   return (
     <>
-      <chakra.div
+      <Flex
+        flexDirection="column"
         backgroundColor="white"
         w="full"
         border="1px"
@@ -102,8 +103,8 @@ export const WishlistPost = ({
         borderRadius={8}
         overflow="hidden"
       >
-        <Flex flexDirection="column">
-          <Flex p={4}>
+        <Flex flex={1} flexDirection="column">
+          <Flex p={4} flex={1}>
             <SkeletonCircle isLoaded={!isLoadingPost} mr={4}>
               <UserAvatar
                 size="sm"
@@ -141,7 +142,7 @@ export const WishlistPost = ({
                   </Text>
                 </Skeleton>
               </Flex>
-              <Skeleton isLoaded={!isLoadingPost} w="60%">
+              <Skeleton isLoaded={!isLoadingPost}>
                 <Flex alignItems="center" gap={2}>
                   <Icon as={IoLink} color="slategray" />
                   <Link
@@ -150,6 +151,8 @@ export const WishlistPost = ({
                     target="_blank"
                     fontSize="sm"
                     textDecoration="underline"
+                    noOfLines={1}
+                    w="full"
                   >
                     {url}
                   </Link>
@@ -168,6 +171,7 @@ export const WishlistPost = ({
               )}
               {isInShoppingList && (
                 <Button
+                  mt="auto"
                   variant={isPurchased ? 'solid' : 'outline'}
                   alignSelf="flex-start"
                   size="sm"
@@ -295,7 +299,7 @@ export const WishlistPost = ({
             )}
           </Flex>
         </Flex>
-      </chakra.div>
+      </Flex>
       <PostDeleteConfirmPrompt
         isOpen={isDeletingPost}
         onClose={() => setIsDeletingPost(false)}

@@ -6,13 +6,12 @@ import {
   WishlistPost,
 } from 'src/hooks/queries/useGetWishlistPosts';
 import { GET_USERS_CLAIMED_POSTS_KEY } from 'src/hooks/queries/useGetUsersClaimedPosts';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
-import { updatePostInQueryData } from 'utils/queries';
+import { useUser } from '@supabase/auth-helpers-react';
 
 export const useUnclaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
   const { posts_claimed } = useSupabaseClient();
   const queryClient = useQueryClient();
-  const { data: user } = useGetUser();
+  const user = useUser();
 
   return useMutation(
     async ({ post_id }: ClaimPostInput) => {

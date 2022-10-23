@@ -34,7 +34,7 @@ export const useGetUser = (props: UseGetUserProps = {}) => {
         id: id ?? '',
         name: name ?? '',
       };
-    },
-    { enabled: !!user?.id, onSuccess }
+    }
+    // { enabled: !!user?.id, onSuccess }
   );
 };

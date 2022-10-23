@@ -15,7 +15,7 @@ import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGe
 import { WishlistUsers } from 'src/components/wishlist-users/WishlistUsers';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
-import { useGetUser } from 'hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 
 interface WishlistEntryCardProps {
   name?: string;
@@ -31,7 +31,7 @@ export const WishlistEntryCard = ({
   isLoading,
 }: WishlistEntryCardProps) => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const { data: user } = useGetUser();
+  const user = useUser();
   const { data: usersInWishlist = [] } = useGetWishlistUsers(id ?? '');
   const { data: wishlistPosts = [] } = useGetWishlistPosts(id ?? '');
   const { data: wishlistsWithPostsClaimedByUser } = useGetUsersClaimedPosts();
@@ -41,7 +41,7 @@ export const WishlistEntryCard = ({
     [];
 
   const otherPostsCount = wishlistPosts.filter(
-    (post) => post.created_by !== user?.id
+    (post) => post.user_id !== user?.id
   ).length;
 
   const userPostsCount = wishlistPosts?.length - otherPostsCount;

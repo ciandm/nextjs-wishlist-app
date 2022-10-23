@@ -14,51 +14,40 @@ export interface Database {
           id: string
           created_at: string | null
           name: string | null
-          created_by: string | null
+          user_id: string | null
           price: string | null
           url: string | null
           description: string | null
           is_favorited: boolean | null
           is_purchased: boolean | null
+          wishlist_id: string
         }
         Insert: {
           id?: string
           created_at?: string | null
           name?: string | null
-          created_by?: string | null
+          user_id?: string | null
           price?: string | null
           url?: string | null
           description?: string | null
           is_favorited?: boolean | null
           is_purchased?: boolean | null
+          wishlist_id: string
         }
         Update: {
           id?: string
           created_at?: string | null
           name?: string | null
-          created_by?: string | null
+          user_id?: string | null
           price?: string | null
           url?: string | null
           description?: string | null
           is_favorited?: boolean | null
           is_purchased?: boolean | null
+          wishlist_id?: string
         }
       }
       posts_claimed: {
-        Row: {
-          user_id: string
-          post_id: string
-        }
-        Insert: {
-          user_id: string
-          post_id: string
-        }
-        Update: {
-          user_id?: string
-          post_id?: string
-        }
-      }
-      user_post: {
         Row: {
           user_id: string
           post_id: string
@@ -103,38 +92,24 @@ export interface Database {
           name?: string | null
         }
       }
-      wishlist_post: {
-        Row: {
-          wishlist_id: string
-          post_id: string
-        }
-        Insert: {
-          wishlist_id: string
-          post_id: string
-        }
-        Update: {
-          wishlist_id?: string
-          post_id?: string
-        }
-      }
       wishlists: {
         Row: {
           id: string
           created_at: string | null
           name: string | null
-          created_by: string | null
+          user_id: string | null
         }
         Insert: {
           id?: string
           created_at?: string | null
           name?: string | null
-          created_by?: string | null
+          user_id?: string | null
         }
         Update: {
           id?: string
           created_at?: string | null
           name?: string | null
-          created_by?: string | null
+          user_id?: string | null
         }
       }
     }

@@ -2,13 +2,13 @@ import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import React from 'react';
 import { WishlistPost } from 'src/components/wishlist-post/WishlistPost';
 import { Box, chakra, Text } from '@chakra-ui/react';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { PostFilterOptions } from 'components/post-filter-options/PostFilterOptions';
 
 export type StatusFilterType = 'claimed' | 'unclaimed' | 'claimed-by-user';
 
 export const OtherPosts = ({ wishlist_id }: { wishlist_id: string }) => {
-  const { data: user } = useGetUser();
+  const user = useUser();
   const { data: posts = [] } = useGetWishlistPosts(wishlist_id);
 
   const [statusFilter, setStatusFilter] = React.useState<
@@ -19,8 +19,8 @@ export const OtherPosts = ({ wishlist_id }: { wishlist_id: string }) => {
   );
 
   const filteredPosts = posts
-    .filter((post) => post.created_by !== user?.id)
-    .filter((post) => (userFilter ? post.created_by === userFilter : post))
+    .filter((post) => post.user_id !== user?.id)
+    .filter((post) => (userFilter ? post.user_id === userFilter : post))
     .filter((post) => {
       switch (statusFilter) {
         case 'claimed':

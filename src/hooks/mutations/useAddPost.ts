@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { Post } from 'types/utils';
 import { addPostToQueryData } from 'utils/queries';
+import { useToast } from '@chakra-ui/react';
 
 export type AddPostInput = Pick<
   Post,
@@ -12,9 +13,10 @@ export type AddPostInput = Pick<
 };
 
 export const useAddPost = () => {
-  const { posts, user_post, wishlist_post } = useSupabaseClient();
+  const { posts } = useSupabaseClient();
   const queryClient = useQueryClient();
-  const { data: user } = useGetUser();
+  const user = useUser();
+  const toast = useToast();
 
   return useMutation(
     async ({
@@ -27,12 +29,14 @@ export const useAddPost = () => {
     }: AddPostInput) => {
       const { data: post } = await posts
         .insert({
+          wishlist_id,
           name,
           price,
           url,
           description,
-          created_by: user?.id ?? '',
+          user_id: user?.id ?? '',
           is_favorited,
+          is_purchased: false,
         })
         .select();
 
@@ -40,21 +44,20 @@ export const useAddPost = () => {
         throw new Error('Failed to create post');
       }
 
-      await user_post.insert({
-        user_id: user?.id ?? '',
-        post_id: post?.[0]?.id ?? '',
-      });
-
-      await wishlist_post.insert({
-        wishlist_id: wishlist_id,
-        post_id: post?.[0]?.id ?? '',
-      });
-
       return post?.[0];
     },
     {
       onSuccess: (post, { wishlist_id }) => {
         addPostToQueryData({ post, wishlist_id, queryClient });
+      },
+      onError: () => {
+        toast({
+          title: 'Something went wrong adding your post',
+          description: 'Please try again',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       },
     }
   );

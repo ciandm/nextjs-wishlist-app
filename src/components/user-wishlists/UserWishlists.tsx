@@ -1,25 +1,26 @@
 import React from 'react';
 import { WishlistEntryCard } from 'components/wishlist-entry-card/WishlistEntryCard';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
-import { Box, Flex, Skeleton } from '@chakra-ui/react';
+import { Box, Flex, Skeleton, Text } from '@chakra-ui/react';
 import { CreateWishlistForm } from 'src/components/create-wishlist-form/CreateWishlistForm';
 import emptyWishlists from 'public/images/empty-wishlists.svg';
 import { EmptyState } from 'components/empty-state/EmptyState';
 import { Wishlist } from 'types/utils';
 
 export const UserWishlists = () => {
-  const { data: user } = useGetUser();
+  const user = useUser();
   const {
     data: wishlists = [],
     isLoading: isLoadingWishlist,
     isFetching: isFetchingWishlist,
     status,
   } = useGetWishlistsByUserId();
+  const name = user?.user_metadata.name;
 
-  const _wishlists = isLoadingWishlist
-    ? Array(3).fill(null)
-    : (wishlists as Wishlist[]);
+  const _wishlists = (
+    isLoadingWishlist ? Array(3).fill(null) : wishlists
+  ) as Wishlist[];
 
   const hasNoWishlists = wishlists.length === 0 && status === 'success';
 
@@ -35,6 +36,11 @@ export const UserWishlists = () => {
       <Skeleton isLoaded={!isLoadingWishlist}>
         <CreateWishlistForm />
       </Skeleton>
+      {!hasNoWishlists && !isFetchingWishlist && (
+        <Text fontSize="xl" fontWeight="medium">
+          Hi {name}, here are your wishlists:
+        </Text>
+      )}
       <Box
         display={['flex', null, 'grid']}
         flexWrap="wrap"
@@ -46,7 +52,7 @@ export const UserWishlists = () => {
             key={wishlist?.id ?? index}
             name={wishlist?.name ?? ''}
             isAdmin={
-              isLoadingWishlist ? false : !!(wishlist?.created_by === user?.id)
+              isLoadingWishlist ? false : !!(wishlist?.user_id === user?.id)
             }
             id={wishlist?.id}
             isLoading={isLoadingWishlist}

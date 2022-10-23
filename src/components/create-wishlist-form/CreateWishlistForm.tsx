@@ -1,4 +1,4 @@
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import { useCreateWishlist } from 'src/hooks/mutations/useCreateWishlist';
@@ -32,7 +32,7 @@ interface CreateWishlistFormState {
 }
 
 export const CreateWishlistForm = () => {
-  const { data: user } = useGetUser();
+  const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const {
     handleSubmit,
@@ -80,6 +80,7 @@ export const CreateWishlistForm = () => {
       },
       {
         onSuccess: () => {
+          reset();
           setIsOpen(false);
           toast({
             title: 'Wishlist created',

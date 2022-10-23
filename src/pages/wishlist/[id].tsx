@@ -22,46 +22,43 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { OtherPosts } from 'components/other-posts/OtherPosts';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { UserPosts } from 'src/components/user-posts/UserPosts';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import { IoCheckmarkCircle, IoInformationCircle } from 'react-icons/io5';
 import { EmptyState } from 'components/empty-state/EmptyState';
 import { withPageAuth } from '@supabase/auth-helpers-nextjs';
 import emptyPosts from 'public/images/empty-posts.svg';
+import { Database } from 'types/database.types';
+import uniq from 'lodash/uniq';
 
 const WishlistPage = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: user } = useGetUser();
+  const user = useUser();
   const { data: wishlist, isLoading: isLoadingWishlist } = useGetWishlist(id);
   const { data: wishlistUsers = [] } = useGetWishlistUsers(id);
   const { data: wishlistPosts = [] } = useGetWishlistPosts(id);
 
-  const otherPosts = wishlistPosts.filter(
-    (post) => post.created_by !== user?.id
-  );
+  const otherPosts = wishlistPosts.filter((post) => post.user_id !== user?.id);
 
-  const userPosts = wishlistPosts.filter(
-    (post) => post.created_by === user?.id
-  );
+  const userPosts = wishlistPosts.filter((post) => post.user_id === user?.id);
 
-  const othersWhoUserHasClaimedFor = wishlistPosts.reduce<string[]>(
-    (users, post) => {
+  const othersWhoUserHasClaimedFor = uniq(
+    wishlistPosts.reduce<string[]>((users, post) => {
       if (post.claimed_by.map(({ id }) => id).includes(user?.id ?? '')) {
-        return [...users, post?.created_by ?? ''];
+        return [...users, post?.user_id ?? ''];
       }
       return users;
-    },
-    []
+    }, [])
   );
 
   const othersWhoUserHasNotClaimedForCount = wishlistUsers.filter(
     (u) =>
       u.id !== user?.id &&
       !othersWhoUserHasClaimedFor.includes(u.id) &&
-      otherPosts.filter((post) => post.created_by === u.id).length > 0
+      otherPosts.filter((post) => post.user_id === u.id).length > 0
   )?.length;
 
   const unclaimedOtherPosts = otherPosts.filter(
@@ -102,6 +99,7 @@ const WishlistPage = () => {
           </Skeleton>
         </chakra.div>
         <InfoMessages
+          totalOtherPosts={otherPosts.length}
           totalUsers={wishlistUsers?.length}
           othersWhoUserHasClaimedFor={othersWhoUserHasClaimedFor?.length}
           othersWhoUserHasNotClaimedFor={othersWhoUserHasNotClaimedForCount}
@@ -170,11 +168,13 @@ export default WishlistPage;
 const InfoMessages = ({
   totalUsers,
   totalPosts,
+  totalOtherPosts,
   unclaimedOtherPosts,
   othersWhoUserHasClaimedFor,
   othersWhoUserHasNotClaimedFor,
 }: {
   totalPosts: number;
+  totalOtherPosts: number;
   unclaimedOtherPosts: number;
   othersWhoUserHasClaimedFor: number;
   othersWhoUserHasNotClaimedFor: number;
@@ -184,6 +184,13 @@ const InfoMessages = ({
 
   if (totalPosts === 0) {
     return null;
+  }
+
+  if (unclaimedOtherPosts === 0 && totalOtherPosts > 0) {
+    messages.push({
+      message: 'All posts have been claimed',
+      type: 'success',
+    });
   }
 
   if (unclaimedOtherPosts > 0) {
@@ -244,4 +251,21 @@ const InfoMessages = ({
   );
 };
 
-export const getServerSideProps = withPageAuth({ redirectTo: '/login' });
+export const getServerSideProps = withPageAuth<Database>({
+  redirectTo: '/login',
+  async getServerSideProps(context, supabase) {
+    const wishlist = (
+      await supabase.from('wishlists').select('*').eq('id', context.params?.id)
+    ).data?.[0];
+
+    if (!wishlist) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {},
+    };
+  },
+});

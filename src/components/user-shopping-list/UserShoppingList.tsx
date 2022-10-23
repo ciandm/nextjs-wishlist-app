@@ -3,7 +3,7 @@ import { Text, Flex, Icon, Box } from '@chakra-ui/react';
 import { WishlistPost } from 'components/wishlist-post/WishlistPost';
 import { useGetWishlistsByUserId } from 'hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
 import emptyShoppingList from 'public/images/empty-shopping-list.svg';
 import NextLink from 'next/link';
@@ -43,7 +43,7 @@ export const UserShoppingList = () => {
 
 const WishlistGroup = ({ id, name }: { id: string; name: string }) => {
   const { data: posts } = useGetWishlistPosts(id);
-  const { data: user } = useGetUser();
+  const user = useUser();
 
   const usersClaimedPosts =
     posts?.filter((post) =>
@@ -95,12 +95,7 @@ const WishlistGroup = ({ id, name }: { id: string; name: string }) => {
         ]}
       >
         {usersClaimedPosts?.map((post) => (
-          <WishlistPost
-            isInShoppingList
-            wishlist_id={id}
-            key={post.id}
-            {...post}
-          />
+          <WishlistPost isInShoppingList key={post.id} {...post} />
         ))}
       </Box>
     </Flex>

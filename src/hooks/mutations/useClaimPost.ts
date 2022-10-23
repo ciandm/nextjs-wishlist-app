@@ -54,7 +54,6 @@ export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
                 return _data;
               });
             }
-            console.log('out here');
             return [...(oldData ?? []), { wishlist_id, posts: [post_id] }];
           }
         );

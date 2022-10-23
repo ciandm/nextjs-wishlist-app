@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
 import { Post } from 'types/utils';
 import { updatePostInQueryData } from 'utils/queries';
 
@@ -14,7 +13,6 @@ export type AddPostInput = Pick<
 export const useEditPost = () => {
   const { posts } = useSupabaseClient();
   const queryClient = useQueryClient();
-  const { data: user } = useGetUser();
 
   return useMutation(
     async ({
@@ -31,7 +29,6 @@ export const useEditPost = () => {
           price,
           url,
           description,
-          created_by: user?.id ?? '',
           is_favorited,
         })
         .eq('id', id)

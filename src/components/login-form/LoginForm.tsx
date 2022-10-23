@@ -12,13 +12,15 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoLockClosed, IoMail } from 'react-icons/io5';
 import NextLink from 'next/link';
 import { FormWrapper } from 'components/form-wrapper/FormWrapper';
 import { useLogin } from 'hooks/mutations/useLogin';
 import axios from 'axios';
+import { useUser } from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/router';
 
 interface LoginFormState {
   email: string;
@@ -57,8 +59,7 @@ export const LoginForm = () => {
             status: 'error',
           });
         },
-        onSettled: (data) => {
-          console.log(data);
+        onSuccess: () => {
           setLoading(false);
         },
       }

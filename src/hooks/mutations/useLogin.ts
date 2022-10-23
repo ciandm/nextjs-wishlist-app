@@ -1,23 +1,21 @@
-import React from 'react';
-import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
 import { User } from '@supabase/supabase-js';
-import { AxiosError } from 'axios';
+import { useSupabaseClient } from 'supabase/useSupabaseClient';
 
 type LoginRequest = { email: string; password: string };
 
 export const useLogin = () => {
-  const router = useRouter();
+  const supabase = useSupabaseClient();
 
-  return useMutation<User, AxiosError, LoginRequest>(
+  return useMutation<User, unknown, LoginRequest>(
     async ({ email, password }) => {
-      return axios.post('/api/sign-in', { email, password });
-    },
-    {
-      onSuccess: () => {
-        router.push('/');
-      },
+      return supabase.auth
+        .signInWithPassword({
+          email,
+          password,
+        })
+        .then((response) => response.data?.user)
+        .catch((e) => e);
     }
   );
 };

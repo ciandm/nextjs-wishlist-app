@@ -13,8 +13,21 @@ export const useDeleteWishlist = () => {
 
   return useMutation<unknown, unknown, DeleteWishlistInput>(
     async ({ id }) => {
-      await user_wishlist.delete().eq('wishlist_id', id);
-      return wishlists.delete().eq('id', id);
+      const userWishlistResponse = await user_wishlist
+        .delete()
+        .eq('wishlist_id', id);
+
+      if (userWishlistResponse.error) {
+        throw new Error('Failed to delete wishlist');
+      }
+
+      const wishlistResponse = await wishlists.delete().eq('id', id);
+
+      if (wishlistResponse.error) {
+        throw new Error('Failed to delete wishlist');
+      }
+
+      return wishlistResponse.data;
     },
     {
       onSuccess: () => {

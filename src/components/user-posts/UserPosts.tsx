@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 import { useGetWishlistPosts } from 'hooks/queries/useGetWishlistPosts';
 import {
   Button,
@@ -20,7 +20,7 @@ import {
 import { Post } from 'types/utils';
 
 export const UserPosts = ({ wishlist_id }: { wishlist_id: string }) => {
-  const { data: user } = useGetUser();
+  const user = useUser();
   const {
     data: posts = [],
     isLoading = true,
@@ -28,7 +28,7 @@ export const UserPosts = ({ wishlist_id }: { wishlist_id: string }) => {
     status,
   } = useGetWishlistPosts(wishlist_id);
 
-  const usersPosts = posts.filter((post) => post.created_by === user?.id);
+  const usersPosts = posts.filter((post) => post.user_id === user?.id);
 
   const hasPosts = usersPosts.length > 0 && status === 'success';
   const hasNoPosts = usersPosts.length === 0 && status === 'success';
@@ -153,7 +153,6 @@ const PostsContainer = ({
           <WishlistPost
             onEdit={handleOnEdit}
             key={post?.id ? post.id : index}
-            wishlist_id={wishlist_id}
             isLoading={isLoading}
             {...post}
           />

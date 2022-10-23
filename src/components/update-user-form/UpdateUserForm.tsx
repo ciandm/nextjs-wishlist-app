@@ -13,7 +13,7 @@ import {
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useUpdateUser } from 'src/hooks/mutations/useUpdateUser';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 
 interface UpdateUserFormState {
   name: string;

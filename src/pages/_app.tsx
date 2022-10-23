@@ -12,7 +12,7 @@ import { Database } from 'types/database.types';
 import { theme } from 'src/theme/theme';
 import { NextPage } from 'next';
 import { Layout } from 'components/layout/Layout';
-import { supabase } from 'supabase/client';
+import { UserSetup } from 'components/user-setup/UserSetup';
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -36,7 +36,9 @@ const App = ({
     new QueryClient({
       defaultOptions: {
         queries: {
-          refetchOnWindowFocus: false,
+          refetchOnWindowFocus:
+            process.env.NODE_ENV !== 'development' ? 'always' : false,
+          refetchOnMount: false,
           cacheTime: Infinity,
           staleTime: Infinity,
         },
@@ -44,39 +46,26 @@ const App = ({
     })
   );
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        await fetch('/api/set-auth-cookie', {
-          method: 'POST',
-          headers: new Headers({ 'content-Type': 'application/json' }),
-          body: JSON.stringify({ session, event }),
-        });
-      }
-    );
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
-
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider
-        toastOptions={{ defaultOptions: { position: 'top', isClosable: true } }}
-        theme={theme}
-      >
-        <SessionContextProvider
-          supabaseClient={supabaseClient}
-          initialSession={initialSession}
+    <SessionContextProvider
+      supabaseClient={supabaseClient}
+      initialSession={initialSession}
+    >
+      <UserSetup />
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider
+          toastOptions={{
+            defaultOptions: { position: 'top', isClosable: true },
+          }}
+          theme={theme}
         >
           {getLayout(<Component {...pageProps} />)}
-        </SessionContextProvider>
-      </ChakraProvider>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
+        </ChakraProvider>
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </SessionContextProvider>
   );
 };
 

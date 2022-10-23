@@ -13,22 +13,19 @@ import {
   ModalProps,
 } from '@chakra-ui/react';
 import { useAddPost } from 'hooks/mutations/useAddPost';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useEditPost } from 'hooks/mutations/useEditPost';
-import { StepOneForm } from './step-one-form/StepOneForm';
-import { StepTwoForm } from './step-two-form/StepTwoForm';
+import { Form } from './form/Form';
 import { FormProvider, useForm } from 'react-hook-form';
 
 interface MutatePostFormPropsModal extends ModalProps {
   title: string;
-  currentStep: number;
   renderFooter: () => React.ReactNode;
 }
 
 const FormDrawer = ({
   children,
   title,
-  currentStep,
   isOpen,
   renderFooter,
   ...rest
@@ -40,11 +37,7 @@ const FormDrawer = ({
       <DrawerContent overflow="hidden">
         <DrawerHeader pb={2}>
           <Flex alignItems="center" justifyContent="space-between">
-            {/* <Text>{isEditing ? 'Edit your post' : 'Add a post'}</Text> */}
             <Text>{title}</Text>
-            <Text color="gray.500" fontSize="sm">
-              {currentStep} / 2
-            </Text>
           </Flex>
         </DrawerHeader>
         <DrawerBody pt={4} pb={8}>
@@ -90,7 +83,6 @@ export const MutatePostForm = ({
       ...initialData,
     },
   });
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const { mutate: handleAddPost, isLoading: isLoadingAddPost } = useAddPost();
   const { mutate: handleEditPost, isLoading: isLoadingEditPost } =
     useEditPost();
@@ -100,25 +92,16 @@ export const MutatePostForm = ({
 
   useEffect(() => {
     if (initialData) {
-      setCurrentStep(1);
       reset({ ...initialData });
     }
   }, [initialData, reset]);
 
   function handleOnClose() {
-    setCurrentStep(1);
     reset();
     onClose?.();
   }
 
-  function handleStepOneSubmit() {
-    setCurrentStep(2);
-  }
-
-  function handleStepTwoSubmit({
-    isFavorite,
-    ...passedData
-  }: MutatePostFormState) {
+  function handleSubmit({ isFavorite, ...passedData }: MutatePostFormState) {
     if (isEditing) {
       handleEditPost(
         {
@@ -161,18 +144,13 @@ export const MutatePostForm = ({
 
   const formActionsProps = {
     isLoading,
-    currentStep,
     isEditing,
-    setCurrentStep,
   };
 
   const contentComponent = (
     <FormProvider reset={reset} {...restMethods}>
       <MutatePostFormContent
-        handleStepOneSubmit={handleStepOneSubmit}
-        handleStepTwoSubmit={handleStepTwoSubmit}
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
+        onSubmit={handleSubmit}
         renderFooter={() =>
           type === 'default' && <FormActions {...formActionsProps} />
         }
@@ -184,7 +162,6 @@ export const MutatePostForm = ({
     return (
       <FormDrawer
         title={isEditing ? 'Edit your post' : 'Add a post'}
-        currentStep={currentStep}
         onClose={onClose ?? (() => true)}
         isOpen={!!isOpen}
         closeOnOverlayClick={isLoading ? false : true}
@@ -203,26 +180,17 @@ export const MutatePostForm = ({
 
 interface MutatePostFormContentProps {
   renderFooter: () => React.ReactNode;
-  currentStep: number;
-  setCurrentStep: React.Dispatch<React.SetStateAction<1 | 2>>;
-  handleStepOneSubmit: () => void;
-  handleStepTwoSubmit: (data: MutatePostFormState) => void;
+  onSubmit: (data: MutatePostFormState) => void;
 }
 
 export const MutatePostFormContent = ({
   renderFooter,
-  currentStep,
-  handleStepOneSubmit,
-  handleStepTwoSubmit,
+  onSubmit,
 }: MutatePostFormContentProps) => {
   return (
     <>
       <Flex flexDirection="column" gap={2} pb={4}>
-        {currentStep === 1 ? (
-          <StepOneForm handleStepOneSubmit={handleStepOneSubmit} />
-        ) : (
-          <StepTwoForm onSubmit={(data) => handleStepTwoSubmit(data)} />
-        )}
+        <Form onSubmit={onSubmit} />
       </Flex>
       {renderFooter()}
     </>
@@ -232,30 +200,11 @@ export const MutatePostFormContent = ({
 interface FormActionsProps {
   isLoading: boolean;
   onClose?: () => void;
-  setCurrentStep: React.Dispatch<React.SetStateAction<1 | 2>>;
-  currentStep: number;
   isEditing: boolean;
 }
 
-const FormActions = ({
-  isLoading,
-  onClose,
-  currentStep,
-  setCurrentStep,
-}: FormActionsProps) => (
+const FormActions = ({ isLoading, onClose }: FormActionsProps) => (
   <Flex flex={1} alignItems="center" justifyContent="space-between">
-    {currentStep === 2 && (
-      <Button
-        isDisabled={isLoading}
-        onClick={() => setCurrentStep(1)}
-        mr="auto"
-        colorScheme="gray"
-        size="sm"
-        variant="link"
-      >
-        Back
-      </Button>
-    )}
     <Flex ml="auto" gap={4}>
       {onClose && (
         <Button variant="link" onClick={onClose} isDisabled={isLoading}>
@@ -265,10 +214,10 @@ const FormActions = ({
       <Button
         isLoading={isLoading}
         type="submit"
-        form={currentStep === 1 ? 'step-one' : 'step-two'}
+        form="mutate-post-form"
         colorScheme="blue"
       >
-        {currentStep === 1 ? 'Next' : 'Confirm'}
+        Confirm
       </Button>
     </Flex>
   </Flex>

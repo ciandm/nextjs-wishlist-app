@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSupabaseClient } from 'src/supabase/useSupabaseClient';
-import { useGetUser } from 'src/hooks/queries/useGetUser';
+import { useUser } from '@supabase/auth-helpers-react';
 
 export const GET_WISHLISTS_BY_USER_ID_KEY = {
   base: { name: 'GET_WISHLISTS_BY_USER_ID' },
@@ -9,7 +9,7 @@ export const GET_WISHLISTS_BY_USER_ID_KEY = {
 
 export const useGetWishlistsByUserId = () => {
   const { user_wishlist, wishlists } = useSupabaseClient();
-  const { data: user } = useGetUser();
+  const user = useUser();
 
   return useQuery(
     GET_WISHLISTS_BY_USER_ID_KEY.query(user?.id ?? ''),
@@ -29,6 +29,9 @@ export const useGetWishlistsByUserId = () => {
       console.log('--- [useGetWishlistsByUserId] fetched', wishlistsData);
 
       return wishlistsData ?? [];
+    },
+    {
+      enabled: !!user?.id,
     }
   );
 };
