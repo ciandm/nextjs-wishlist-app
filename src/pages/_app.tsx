@@ -37,10 +37,7 @@ const App = ({
       defaultOptions: {
         queries: {
           refetchOnWindowFocus:
-            process.env.NODE_ENV !== 'development' ? 'always' : false,
-          refetchOnMount: false,
-          cacheTime: Infinity,
-          staleTime: Infinity,
+            process.env.NODE_ENV !== 'development' ? true : false,
         },
       },
     })
