@@ -41,8 +41,12 @@ export const LoginForm = () => {
 
   useEffect(() => {
     const password = localStorage.getItem('password');
+    const email = localStorage.getItem('password');
     if (password) {
       setValue('password', password);
+    }
+    if (email) {
+      setValue('email', email);
     }
   }, [setValue]);
 
@@ -70,8 +74,10 @@ export const LoginForm = () => {
         onSuccess: () => {
           if (isRememberMe) {
             localStorage.setItem('password', password);
+            localStorage.setItem('email', email);
           } else {
             localStorage.removeItem('password');
+            localStorage.removeItem('email');
           }
           setLoading(false);
         },

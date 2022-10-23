@@ -65,6 +65,7 @@ export const RegisterForm = () => {
       if (error) throw error;
       if (isRememberMe) {
         localStorage.setItem('password', password);
+        localStorage.setItem('email', email);
       }
       router.push('/');
     } catch (error) {
