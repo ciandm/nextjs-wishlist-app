@@ -1,11 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useUser } from '@supabase/auth-helpers-react';
 import { useSupabaseClient } from 'supabase/useSupabaseClient';
 import { useToast } from '@chakra-ui/react';
 
 export const UserSetup = () => {
-  const user = useUser();
   const router = useRouter();
   const supabase = useSupabaseClient();
   const toast = useToast();

@@ -31,7 +31,11 @@ interface CreateWishlistFormState {
   users: { email: string }[];
 }
 
-export const CreateWishlistForm = () => {
+export const CreateWishlistForm = ({
+  initialState = { users: [{ email: '' }], name: '' },
+}: {
+  initialState?: CreateWishlistFormState;
+}) => {
   const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -42,7 +46,7 @@ export const CreateWishlistForm = () => {
     register,
     reset,
   } = useForm<CreateWishlistFormState>({
-    defaultValues: { users: [{ email: '' }] },
+    defaultValues: { ...initialState },
   });
   const { fields, append, remove } = useFieldArray({
     control,
