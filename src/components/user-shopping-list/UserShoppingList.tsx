@@ -72,7 +72,12 @@ const WishlistGroup = ({ id, name }: { id: string; name: string }) => {
           as="a"
           mb={2}
         >
-          <Flex mb={1} justifyContent="space-between" alignItems="center">
+          <Flex
+            mb={1}
+            justifyContent="space-between"
+            alignItems="center"
+            gap={2}
+          >
             {name} <Icon as={IoChevronForward} />
           </Flex>
           <Text color="gray.500" fontSize="sm">

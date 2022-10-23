@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -12,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoLockClosed, IoMail, IoPerson } from 'react-icons/io5';
 import NextLink from 'next/link';
@@ -28,6 +29,7 @@ interface RegisterFormState {
 }
 
 export const RegisterForm = () => {
+  const [isRememberMe, setIsRememberMe] = useState(true);
   const {
     register,
     handleSubmit,
@@ -39,6 +41,13 @@ export const RegisterForm = () => {
   const toast = useToast();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const password = localStorage.getItem('password');
+    if (password) {
+      setValue('password', password);
+    }
+  }, [setValue]);
 
   const onSubmit = handleSubmit(async ({ email, password, name }) => {
     try {
@@ -54,6 +63,9 @@ export const RegisterForm = () => {
         },
       });
       if (error) throw error;
+      if (isRememberMe) {
+        localStorage.setItem('password', password);
+      }
       router.push('/');
     } catch (error) {
       if (error instanceof AuthError) {
@@ -159,6 +171,12 @@ export const RegisterForm = () => {
           {errors?.password && errors.password.message}
         </FormErrorMessage>
       </FormControl>
+      <Checkbox
+        isChecked={isRememberMe}
+        onChange={() => setIsRememberMe((prev) => !prev)}
+      >
+        Remember me
+      </Checkbox>
     </FormWrapper>
   );
 };

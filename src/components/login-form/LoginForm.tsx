@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -11,14 +12,14 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoLockClosed, IoMail } from 'react-icons/io5';
 import NextLink from 'next/link';
 import { FormWrapper } from 'components/form-wrapper/FormWrapper';
 import { useLogin } from 'hooks/mutations/useLogin';
-import axios from 'axios';
 import { useToast } from 'hooks/useToast';
+import { AuthError } from '@supabase/supabase-js';
 
 interface LoginFormState {
   email: string;
@@ -32,10 +33,18 @@ export const LoginForm = () => {
     formState: { errors },
     setValue,
   } = useForm<LoginFormState>();
+  const [isRememberMe, setIsRememberMe] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const toast = useToast();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { mutate: handleLogIn } = useLogin();
+
+  useEffect(() => {
+    const password = localStorage.getItem('password');
+    if (password) {
+      setValue('password', password);
+    }
+  }, [setValue]);
 
   const onSubmit = handleSubmit(async ({ email, password }) => {
     setLoading(true);
@@ -43,21 +52,27 @@ export const LoginForm = () => {
       { email, password },
       {
         onError: (error) => {
-          if (axios.isAxiosError(error)) {
+          if (error instanceof AuthError) {
             toast({
               title: 'Something went wrong',
-              description: error.response?.data.error,
+              description: error.message,
               status: 'error',
             });
-            return;
+          } else {
+            toast({
+              title: 'Something went wrong',
+              description: 'Please try again',
+              status: 'error',
+            });
           }
-          toast({
-            title: 'Something went wrong',
-            description: 'Please try again.',
-            status: 'error',
-          });
+          setLoading(false);
         },
         onSuccess: () => {
+          if (isRememberMe) {
+            localStorage.setItem('password', password);
+          } else {
+            localStorage.removeItem('password');
+          }
           setLoading(false);
         },
       }
@@ -127,6 +142,12 @@ export const LoginForm = () => {
           {errors?.password && errors.password.message}
         </FormErrorMessage>
       </FormControl>
+      <Checkbox
+        isChecked={isRememberMe}
+        onChange={() => setIsRememberMe((prev) => !prev)}
+      >
+        Remember me
+      </Checkbox>
     </FormWrapper>
   );
 };
