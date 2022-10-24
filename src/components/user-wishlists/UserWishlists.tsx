@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { WishlistEntryCard } from 'components/wishlist-entry-card/WishlistEntryCard';
 import { useUser } from '@supabase/auth-helpers-react';
 import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
@@ -7,6 +7,7 @@ import { CreateWishlistForm } from 'src/components/create-wishlist-form/CreateWi
 import emptyWishlists from 'public/images/empty-wishlists.svg';
 import { EmptyState } from 'components/empty-state/EmptyState';
 import { Wishlist } from 'types/utils';
+import { useSupabaseClient } from 'supabase/useSupabaseClient';
 
 export const UserWishlists = () => {
   const user = useUser();
@@ -16,13 +17,26 @@ export const UserWishlists = () => {
     isFetching: isFetchingWishlist,
     status,
   } = useGetWishlistsByUserId();
-  const name = user?.user_metadata.name;
+  const [name, setName] = useState('');
+  const { users } = useSupabaseClient();
 
   const _wishlists = (
     isLoadingWishlist ? Array(3).fill(null) : wishlists
   ) as Wishlist[];
 
   const hasNoWishlists = wishlists.length === 0 && status === 'success';
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data } = await users.select('*').eq('id', user?.id).single();
+
+      if (data?.name) {
+        setName(data?.name);
+      }
+    }
+
+    fetchUser();
+  }, [user, users]);
 
   return (
     <Flex
