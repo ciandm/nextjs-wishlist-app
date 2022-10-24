@@ -104,15 +104,70 @@ export const WishlistPost = ({
         overflow="hidden"
       >
         <Flex flex={1} flexDirection="column">
-          <Flex w="full" p={4} flex={1}>
-            <SkeletonCircle isLoaded={!isLoadingPost} mr={4}>
-              <UserAvatar
-                size="sm"
-                mr={4}
-                label={createdByUser?.name ?? ''}
-                email={createdByUser?.email ?? ''}
-              />
-            </SkeletonCircle>
+          <Flex w="full" flexDirection="column" p={4} flex={1}>
+            <Flex
+              alignItems="center"
+              borderBottom="1px"
+              borderColor="gray.200"
+              mb={3}
+              pb={3}
+            >
+              <SkeletonCircle isLoaded={!isLoadingPost} mr={2}>
+                <UserAvatar
+                  size="sm"
+                  label={createdByUser?.name ?? ''}
+                  email={createdByUser?.email ?? ''}
+                />
+              </SkeletonCircle>
+              <Text fontSize="sm" fontWeight="bold" color="gray.700">
+                {createdByUser?.name}
+              </Text>
+              {!isPurchased && !isAuthor && (
+                <Button
+                  ml="auto"
+                  variant={isClaimedByUser ? 'outline' : 'solid'}
+                  isLoading={isLoading}
+                  isDisabled={!!isPurchased}
+                  onClick={
+                    isClaimedByUser
+                      ? () =>
+                          handleUnClaimPost(
+                            { post_id: id },
+                            {
+                              onSuccess: () =>
+                                toast({
+                                  title: 'Post unclaimed',
+                                  status: 'success',
+                                  description: `You have unclaimed ${createdByUser?.name}'s post`,
+                                  isClosable: true,
+                                }),
+                            }
+                          )
+                      : () =>
+                          handleClaimPost(
+                            { post_id: id },
+                            {
+                              onSuccess: () =>
+                                toast({
+                                  status: 'success',
+                                  title: 'Post claimed',
+                                  description: `You have claimed ${createdByUser?.name}'s post`,
+                                  isClosable: true,
+                                }),
+                            }
+                          )
+                  }
+                  colorScheme="blue"
+                  size="sm"
+                >
+                  <Icon
+                    mr={1}
+                    as={isClaimedByUser ? IoRemoveCircle : IoHandLeft}
+                  />
+                  {isClaimedByUser ? 'Unclaim' : 'Claim'}
+                </Button>
+              )}
+            </Flex>
             <Flex w="full" gap={2} flexDirection="column" overflow="hidden">
               <Flex
                 display="flex"
@@ -165,17 +220,16 @@ export const WishlistPost = ({
                   </Link>
                 </Flex>
               </Skeleton>
-              {description ? (
+
+              <SkeletonText
+                isLoaded={!isLoadingPost}
+                noOfLines={2}
+                skeletonHeight={4}
+              >
                 <Text color="gray.600" fontSize="sm">
-                  {description}
+                  {!!description ? description : 'No description provided'}
                 </Text>
-              ) : (
-                <SkeletonText
-                  isLoaded={!isLoadingPost}
-                  noOfLines={2}
-                  skeletonHeight={4}
-                />
-              )}
+              </SkeletonText>
               {isInShoppingList && (
                 <Button
                   mt="auto"
@@ -252,54 +306,13 @@ export const WishlistPost = ({
                 </Skeleton>
                 <Skeleton isLoaded={!isLoadingPost} ml="auto">
                   <Flex>
-                    {isPurchased && isInShoppingList ? null : isPurchased ? (
-                      <Text fontSize="sm" fontWeight="medium">
-                        Purchased
-                      </Text>
-                    ) : (
-                      <Button
-                        variant={isClaimedByUser ? 'outline' : 'solid'}
-                        isLoading={isLoading}
-                        isDisabled={!!isPurchased}
-                        onClick={
-                          isClaimedByUser
-                            ? () =>
-                                handleUnClaimPost(
-                                  { post_id: id },
-                                  {
-                                    onSuccess: () =>
-                                      toast({
-                                        title: 'Post unclaimed',
-                                        status: 'success',
-                                        description: `You have unclaimed ${createdByUser?.name}'s post`,
-                                        isClosable: true,
-                                      }),
-                                  }
-                                )
-                            : () =>
-                                handleClaimPost(
-                                  { post_id: id },
-                                  {
-                                    onSuccess: () =>
-                                      toast({
-                                        status: 'success',
-                                        title: 'Post claimed',
-                                        description: `You have claimed ${createdByUser?.name}'s post`,
-                                        isClosable: true,
-                                      }),
-                                  }
-                                )
-                        }
-                        colorScheme="blue"
-                        size="sm"
-                      >
-                        <Icon
-                          mr={1}
-                          as={isClaimedByUser ? IoRemoveCircle : IoHandLeft}
-                        />
-                        {isClaimedByUser ? 'Unclaim' : 'Claim'}
-                      </Button>
-                    )}
+                    {isPurchased && isInShoppingList
+                      ? null
+                      : isPurchased && (
+                          <Text fontSize="sm" fontWeight="medium">
+                            Purchased
+                          </Text>
+                        )}
                   </Flex>
                 </Skeleton>
               </>

@@ -11,5 +11,6 @@ export const useSupabaseClient = () => {
     wishlists: supabaseClient.from('wishlists'),
     users: supabaseClient.from('users'),
     user_wishlist: supabaseClient.from('user_wishlist'),
+    supabaseClient,
   };
 };

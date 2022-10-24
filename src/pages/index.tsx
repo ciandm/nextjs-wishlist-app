@@ -11,6 +11,7 @@ import {
   Text,
   Skeleton,
   Flex,
+  IconButton,
 } from '@chakra-ui/react';
 import { useGetWishlistsByUserId } from 'src/hooks/queries/useGetWishlistsByUserId/useGetWishlistsByUserId';
 import { UserWishlists } from 'components/user-wishlists/UserWishlists';
@@ -18,6 +19,8 @@ import { UserShoppingList } from 'components/user-shopping-list/UserShoppingList
 import { useGetUsersClaimedPosts } from 'hooks/queries/useGetUsersClaimedPosts';
 
 import { withPageAuth } from '@supabase/auth-helpers-nextjs';
+import { IoPerson } from 'react-icons/io5';
+import { EditProfileForm } from 'components/edit-profile-form/EditProfileForm';
 
 const Home: NextPage = () => {
   const { isLoading: isLoadingWishlists } = useGetWishlistsByUserId();
@@ -50,6 +53,9 @@ const Home: NextPage = () => {
                     </Text>
                   </Badge>
                 )}
+              </Tab>
+              <Tab isDisabled={isLoadingWishlists}>
+                <Skeleton isLoaded={!isLoadingWishlists}>Edit profile</Skeleton>
               </Tab>
             </TabList>
             <TabPanels
@@ -85,6 +91,22 @@ const Home: NextPage = () => {
                   pb={16}
                 >
                   <UserShoppingList />
+                </chakra.div>
+              </TabPanel>
+              <TabPanel
+                overflow="hidden"
+                flex={1}
+                display="flex"
+                flexDirection="column"
+              >
+                <chakra.div
+                  overflow="hidden"
+                  display="flex"
+                  flexDirection="column"
+                  flex={1}
+                  pb={16}
+                >
+                  <EditProfileForm />
                 </chakra.div>
               </TabPanel>
             </TabPanels>

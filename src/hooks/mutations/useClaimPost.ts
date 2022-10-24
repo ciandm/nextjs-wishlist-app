@@ -7,6 +7,7 @@ import {
   WishlistPost,
 } from 'hooks/queries/useGetWishlistPosts';
 import { updatePostInQueryData } from 'utils/queries';
+import { useToast } from 'hooks/useToast';
 
 export type ClaimPostInput = {
   post_id: string;
@@ -16,6 +17,7 @@ export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
   const { posts_claimed, posts } = useSupabaseClient();
   const queryClient = useQueryClient();
   const user = useUser();
+  const toast = useToast();
 
   return useMutation(
     async ({ post_id }: ClaimPostInput) => {
@@ -30,6 +32,11 @@ export const useClaimPost = ({ wishlist_id }: { wishlist_id: string }) => {
     },
     {
       onError: () => {
+        toast({
+          title: 'Error claiming post',
+          status: 'error',
+          description: 'That post does not exist anymore',
+        });
         queryClient.invalidateQueries(
           GET_WISHLIST_POSTS_KEY.query(wishlist_id)
         );

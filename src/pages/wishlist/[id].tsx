@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGetWishlist } from 'src/hooks/queries/useGetWishlist';
 import { useRouter } from 'next/router';
 import { useGetWishlistUsers } from 'src/hooks/queries/useGetWishlistUsers/useGetWishlistUsers';
@@ -31,6 +31,8 @@ import { withPageAuth } from '@supabase/auth-helpers-nextjs';
 import emptyPosts from 'public/images/empty-posts.svg';
 import { Database } from 'types/database.types';
 import uniq from 'lodash/uniq';
+import { useSupabaseClient } from 'supabase/useSupabaseClient';
+import { Post } from 'types/utils';
 
 const WishlistPage = () => {
   const router = useRouter();
@@ -39,7 +41,69 @@ const WishlistPage = () => {
   const user = useUser();
   const { data: wishlist, isLoading: isLoadingWishlist } = useGetWishlist(id);
   const { data: wishlistUsers = [] } = useGetWishlistUsers(id);
-  const { data: wishlistPosts = [] } = useGetWishlistPosts(id);
+  const { data: wishlistPosts = [], refetch: refetchWishlistPosts } =
+    useGetWishlistPosts(id);
+  const { supabaseClient } = useSupabaseClient();
+
+  useEffect(() => {
+    const postsListener = supabaseClient
+      .channel('public:posts')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'posts',
+        },
+        (payload) => {
+          if (!payload.errors && (payload.new as Post).user_id !== user?.id) {
+            console.log('refetching..');
+            refetchWishlistPosts();
+          }
+        }
+      )
+      .subscribe();
+
+    const postsClaimedListener = supabaseClient
+      .channel('public:posts_claimed')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'posts_claimed',
+        },
+        (payload) => {
+          if (!payload.errors) {
+            let postId = '';
+
+            if (payload.eventType === 'INSERT') {
+              postId = (payload.new as { user_id: string; post_id: string })
+                .post_id;
+            }
+
+            if (payload.eventType === 'DELETE') {
+              postId = (payload.old as { user_id: string; post_id: string })
+                .post_id;
+            }
+            if (
+              wishlistPosts.find(
+                (post) => post.id === postId && post.user_id !== user?.id
+              )
+            ) {
+              refetchWishlistPosts();
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      postsListener.unsubscribe();
+      postsClaimedListener.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const otherPosts = wishlistPosts.filter((post) => post.user_id !== user?.id);
 

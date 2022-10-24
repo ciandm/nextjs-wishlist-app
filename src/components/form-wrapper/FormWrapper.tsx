@@ -1,4 +1,5 @@
-import { Button, Flex, FlexProps } from '@chakra-ui/react';
+import { Button, Flex, FlexProps, useToast } from '@chakra-ui/react';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import React, { PropsWithChildren, ReactNode } from 'react';
 
 type FormWrapperProps = FlexProps &
@@ -15,6 +16,23 @@ export const FormWrapper = ({
   renderFooter,
   ...rest
 }: FormWrapperProps) => {
+  const { auth } = useSupabaseClient();
+  const toast = useToast();
+
+  async function signInWithGoogle() {
+    const { error } = await auth.signInWithOAuth({
+      provider: 'google',
+    });
+
+    if (error) {
+      toast({
+        title: 'Something went wrong',
+        description: error.message,
+        status: 'error',
+      });
+    }
+  }
+
   return (
     <Flex
       maxW={400}
@@ -40,6 +58,7 @@ export const FormWrapper = ({
       >
         {buttonLabel}
       </Button>
+      <Button onClick={() => signInWithGoogle()}>Continue with Google</Button>
       <Flex
         borderTop="1px"
         borderTopColor="gray.200"
